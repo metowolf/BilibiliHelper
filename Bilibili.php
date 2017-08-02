@@ -1,14 +1,15 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.3.1
+ *  Version: 0.4.0
  */
 
 Class Bilibili{
 
     public $debug=false;
     public $color=true;
-    public $referer='http://live.bilibili.com/3746256';
+    public $roomid='3746256'; // 主播房间号
+    public $roomuid='14739884'; // 主播 UID
     public $useragent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
 
     public function __construct($cookie){
@@ -16,16 +17,23 @@ Class Bilibili{
         $this->start=time();
         $this->lock['task']['flag']=false;
         $this->lock['sign']=$this->start;
-        $this->lock['heart']=$this->start;
-        $this->lock['heart']+=(300-$this->lock['heart']%300);
         $this->lock['silver']=$this->start;
+        $this->lock['sendgift']=strtotime(date('Y-m-d 23:55:00'));
+        $this->lock['expheart']=$this->start;
+        $this->lock['expheart']+=(300-$this->lock['expheart']%300);
+        $this->lock['giftheart']=$this->start;
+        $this->lock['giftheart']+=(300-$this->lock['giftheart']%300);
+        preg_match('/LIVE_LOGIN_DATA=(.{40})/',$cookie,$token);
+        $this->token=isset($token[1])?$token[1]:'';
     }
 
     public function run(){
         while(time()-$this->start<24*60*60-60){
             if(!$this->sign())return;
-            if(!$this->heart())return;
             if(!$this->silver())return;
+            if(!$this->sendgift())return;
+            if(!$this->expheart())return;
+            if(!$this->giftheart())return;
             sleep(1);
             if(date('H:i')=='23:59')break;
         }
@@ -55,9 +63,9 @@ Class Bilibili{
         return true;
     }
 
-    private function heart(){
-        if(time()<$this->lock['heart'])return true;
-        $this->lock['heart']=time()+5*60;
+    private function expheart(){
+        if(time()<$this->lock['expheart'])return true;
+        $this->lock['expheart']=time()+5*60;
 
         $raw=$this->curl('http://api.live.bilibili.com/User/userOnlineHeart');
         $data=json_decode($raw,true);
@@ -74,6 +82,56 @@ Class Bilibili{
         $b=$data['data']['user_next_intimacy'];
         $per=round($a/$b*100,3);
         $this->log("level:$level exp:$a/$b ($per%)",'magenta','心跳');
+        return true;
+    }
+
+    private function sendgift(){
+        if(time()<$this->lock['sendgift'])return true;
+        $this->lock['sendgift']=time()+24*60*60;
+        if(empty($this->token)){
+            $this->log("cookie 不完整，无法操作",'red','投喂');
+            return true;
+        }
+
+        $this->log("开始翻动礼物",'green','投喂');
+        $raw=$this->curl('http://api.live.bilibili.com/gift/playerBag?_='.round(microtime(true)*1000));
+        $data=json_decode($raw,true);
+        foreach($data['data'] as $vo){
+            if($vo['expireat']!='今日')continue;
+            $payload=array(
+                'giftId'=>$vo['gift_id'],
+                'roomid'=>$this->roomid,
+                'ruid'=>$this->roomuid,
+                'num'=>$vo['gift_num'],
+                'coinType'=>'silver',
+                'Bag_id'=>$vo['id'],
+                'timestamp'=>time(),
+                'rnd'=>mt_rand()%10000000000,
+                'token'=>$this->token,
+            );
+            $res=$this->curl('http://api.live.bilibili.com/giftBag/send',$payload);
+            $res=json_decode($res,true);
+
+            if($res['code'])$this->log("{$data['msg']}",'red','投喂');
+            else $this->log("成功向 http://live.bilibili.com/{$this->roomid} 投喂了 {$vo['gift_num']} 个 {$vo['gift_name']}",'green','投喂');
+        }
+        return true;
+    }
+
+    private function giftheart(){
+        if(time()<$this->lock['giftheart'])return true;
+        $this->lock['giftheart']=time()+5*60;
+
+        $raw=$this->curl('http://api.live.bilibili.com/eventRoom/heart?roomid=23058');
+        $data=json_decode($raw,true);
+
+        if($data['code']==-403){
+            $this->log($data['msg'],'magenta','收礼');
+            $this->lock['giftheart']=time()+24*60*60;
+            return true;
+        }
+        $gift=end($data['data']['gift']);
+        $this->log("{$data['msg']}，礼物 {$gift['bagId']} 喜加一（{$gift['num']}）",'magenta','收礼');
         return true;
     }
 
@@ -104,7 +162,7 @@ Class Bilibili{
             return true;
         }
 
-        $this->log("开始获取验证码","blue",'宝箱');
+        $this->log("开始做小学生算术","blue",'宝箱');
         $captcha=$this->captcha();
         $start=$this->lock['task']['start'];
         $end=$this->lock['task']['end'];
@@ -112,15 +170,14 @@ Class Bilibili{
         $data=json_decode($raw,true);
 
         $this->lock['task']['flag']=false;
-        if($data['code']==0){
-            $this->log("领取成功，silver: {$data['data']['silver']}(+{$data['data']['awardSilver']})",'cyan','宝箱');
-        }
+        if($data['code']==0)$this->log("领取成功，silver: {$data['data']['silver']}(+{$data['data']['awardSilver']})",'cyan','宝箱');
+        else $this->log("领取失败，{$data['msg']}",'red','宝箱');
         $this->lock['silver']=time()+5;
         return true;
     }
 
     private function captcha(){
-        $raw=$this->curl('http://live.bilibili.com/freeSilver/getCaptcha?ts='.time(),false);
+        $raw=$this->curl('http://live.bilibili.com/freeSilver/getCaptcha?ts='.time(),null,false);
         $image=imagecreatefromstring($raw);
         $width=imagesx($image);
         $height=imagesy($image);
@@ -174,12 +231,13 @@ Class Bilibili{
         }
 
         $ans=eval("return $result;");
-        echo "OCR: $result = $ans\n\n";
+        $this->log("(๑•̀ㅂ•́)و✧ $result = $ans","blue",'宝箱');
         return $ans;
     }
 
     private function log($message,$color='default',$type=''){
         $colors = array(
+            'none' => "",
             'black' => "\033[30m%s\033[0m",
             'red' => "\033[31m%s\033[0m",
             'green' => "\033[32m%s\033[0m",
@@ -194,11 +252,11 @@ Class Bilibili{
         );
         $date=date('[Y-m-d H:i:s] ');
         if(!empty($type))$type="[$type] ";
-        if($this->color)echo sprintf($colors[$color],$date.$type.$message).PHP_EOL;
-        else echo $date.$type.$message.PHP_EOL;
+        if(!$this->color)$color='none';
+        echo sprintf($colors[$color],$date.$type.$message).PHP_EOL;
     }
 
-    private function curl($url,$logout=true){
+    private function curl($url,$data=null,$logout=true){
         if($this->debug)$this->log('>>> '.$url,'lightgray');
         $curl=curl_init();
         curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -209,9 +267,14 @@ Class Bilibili{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_REFERER, $this->referer);
+        curl_setopt($curl, CURLOPT_REFERER, 'http://live.bilibili.com/'.$this->roomid);
         curl_setopt($curl, CURLOPT_COOKIE, $this->cookie);
         curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
+        if(!empty($data)){
+            if(is_array($data))$data=http_build_query($data);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        }
         $result=curl_exec($curl);
         curl_close($curl);
         if($this->debug&&$logout)$this->log('<<< '.$result,'yellow');

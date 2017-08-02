@@ -1,10 +1,15 @@
 # BilibiliHelper
-B 站自动领瓜子、直播挂机脚本
+B 站直播实用脚本
 
 ## 功能
  - 每日签到
- - 每 5 分钟自动发送心跳包
- - 每日自动领宝箱（瓜子）
+ - 发送心跳包领经验
+ - 自动领限时礼物
+ - 自动领宝箱（瓜子）
+ - 自动清理（投喂）过期礼物
+
+## TODO
+ - 抽小电视
 
 ## 安装
  1. 下载 `index.php`, `Bilibili.php` 两个文件，并放置在同一个目录下
@@ -23,6 +28,16 @@ A: 可以复制 `index.php` 为 `index1.php`, 同样修改 cookie 后在 `cronta
 
 Q: 为什么会有 `PHP Parse error: syntax error, unexpected '[' ` 报错？
 A: 这是因为 PHP 低版本不支持数组中括号写法，建议升级到 PHP5.6+，脚本现已兼容。
+
+Q: 自动清理（投喂）过期礼物给谁？
+A: 默认投喂给我的直播间，如果需要的话，可以在 index.php 添加两行修改
+```
+$api->roomid='3746256'; // 主播房间号
+$api->roomuid='14739884'; // 主播 UID
+```
+
+Q: 如何正确获取 cookie?
+A: 打开 http://live.bilibili.com/ ，登录后刷新一次，按 F12 在网络中类似 `live_h5_player?optype=` 的数据包中提取。
 
 ## License
 BilibiliHelper is under the MIT license.
