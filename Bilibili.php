@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.0
+ *  Version: 0.4.1
  */
 
 Class Bilibili{
@@ -127,7 +127,7 @@ Class Bilibili{
 
         if($data['code']==-403){
             $this->log($data['msg'],'magenta','收礼');
-            $this->lock['giftheart']=time()+24*60*60;
+            if($data['data']['heart']==false)$this->lock['giftheart']=time()+24*60*60;
             return true;
         }
         $gift=end($data['data']['gift']);
