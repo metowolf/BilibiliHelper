@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.1
+ *  Version: 0.4.2
  */
 
 Class Bilibili{
@@ -22,9 +22,12 @@ Class Bilibili{
         $this->lock['expheart']=$this->start;
         $this->lock['expheart']+=(300-$this->lock['expheart']%300);
         $this->lock['giftheart']=$this->start;
-        $this->lock['giftheart']+=(300-$this->lock['giftheart']%300);
+        $this->lock['giftheart']+=(300-$this->lock['giftheart']%300)+60;
         preg_match('/LIVE_LOGIN_DATA=(.{40})/',$cookie,$token);
         $this->token=isset($token[1])?$token[1]:'';
+        if(empty($this->token)){
+            $this->log("cookie 不完整，部分功能已经禁用",'red','警告');
+        }
     }
 
     public function run(){
@@ -88,10 +91,7 @@ Class Bilibili{
     private function sendgift(){
         if(time()<$this->lock['sendgift'])return true;
         $this->lock['sendgift']=time()+24*60*60;
-        if(empty($this->token)){
-            $this->log("cookie 不完整，无法操作",'red','投喂');
-            return true;
-        }
+        if(empty($this->token))return true;
 
         $this->log("开始翻动礼物",'green','投喂');
         $raw=$this->curl('http://api.live.bilibili.com/gift/playerBag?_='.round(microtime(true)*1000));
@@ -122,12 +122,13 @@ Class Bilibili{
         if(time()<$this->lock['giftheart'])return true;
         $this->lock['giftheart']=time()+5*60;
 
-        $raw=$this->curl('http://api.live.bilibili.com/eventRoom/heart?roomid=23058');
+        $raw=$this->curl('http://api.live.bilibili.com/eventRoom/heart?roomid='.$this->roomid);
         $data=json_decode($raw,true);
 
         if($data['code']==-403){
             $this->log($data['msg'],'magenta','收礼');
             if($data['data']['heart']==false)$this->lock['giftheart']=time()+24*60*60;
+            elseif($data['msg']=='非法心跳')$this->curl("http://api.live.bilibili.com/eventRoom/index?ruid=17561885");
             return true;
         }
         $gift=end($data['data']['gift']);
