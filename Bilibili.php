@@ -1,18 +1,20 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.2
+ *  Version: 0.4.3
  */
 
 Class Bilibili{
 
     public $debug=false;
     public $color=true;
+    public $break=true;
     public $roomid='3746256'; // 主播房间号
     public $roomuid='14739884'; // 主播 UID
     public $useragent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
 
     public function __construct($cookie){
+        date_default_timezone_set('Asia/Shanghai');
         $this->cookie=$cookie;
         $this->start=time();
         $this->lock['task']['flag']=false;
@@ -31,14 +33,14 @@ Class Bilibili{
     }
 
     public function run(){
-        while(time()-$this->start<24*60*60-60){
+        while(true){
             if(!$this->sign())return;
             if(!$this->silver())return;
             if(!$this->sendgift())return;
             if(!$this->expheart())return;
             if(!$this->giftheart())return;
             sleep(1);
-            if(date('H:i')=='23:59')break;
+            if($break&&date('H:i')=='23:59')break;
         }
     }
 
@@ -54,21 +56,21 @@ Class Bilibili{
         }
         if($data['code']==-500){
             $this->log($data['msg'],'green','签到');
-            $this->lock['sign']=time()+24*60*60;
+            $this->lock['sign']+=24*60*60;
             return true;
         }
         $this->log("尝试签到",'blue','签到');
 
+        $this->curl('https://api.live.bilibili.com/giftBag/sendDaily?_='.round(microtime(true)*1000));
         $raw=$this->curl('http://live.bilibili.com/sign/GetSignInfo');
         $data=json_decode($raw,true);
         $this->log("获得 ".$data['data']['text'].$data['data']['specialText'],'green','签到');
-        $this->lock['sign']=time()+12*60*60;
         return true;
     }
 
     private function expheart(){
         if(time()<$this->lock['expheart'])return true;
-        $this->lock['expheart']=time()+5*60;
+        $this->lock['expheart']+=5*60;
 
         $raw=$this->curl('http://api.live.bilibili.com/User/userOnlineHeart');
         $data=json_decode($raw,true);
@@ -90,7 +92,7 @@ Class Bilibili{
 
     private function sendgift(){
         if(time()<$this->lock['sendgift'])return true;
-        $this->lock['sendgift']=time()+24*60*60;
+        $this->lock['sendgift']+=24*60*60;
         if(empty($this->token))return true;
 
         $this->log("开始翻动礼物",'green','投喂');
@@ -120,14 +122,14 @@ Class Bilibili{
 
     private function giftheart(){
         if(time()<$this->lock['giftheart'])return true;
-        $this->lock['giftheart']=time()+5*60;
+        $this->lock['giftheart']+=5*60;
 
         $raw=$this->curl('http://api.live.bilibili.com/eventRoom/heart?roomid='.$this->roomid);
         $data=json_decode($raw,true);
 
         if($data['code']==-403){
             $this->log($data['msg'],'magenta','收礼');
-            if($data['data']['heart']==false)$this->lock['giftheart']=time()+24*60*60;
+            if($data['data']['heart']==false)$this->lock['giftheart']+=24*60*60;
             elseif($data['msg']=='非法心跳')$this->curl("http://api.live.bilibili.com/eventRoom/index?ruid=17561885");
             return true;
         }
@@ -148,7 +150,7 @@ Class Bilibili{
                 return false;
             }
             if($data['code']==-10017){
-                $this->lock['silver']=time()+24*60*60;
+                $this->lock['silver']+=24*60*60;
                 $this->log($data['msg'],'blue','宝箱');
                 return true;
             }
