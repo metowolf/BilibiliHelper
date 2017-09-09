@@ -40,7 +40,7 @@ Class Bilibili{
             if(!$this->expheart())return;
             if(!$this->giftheart())return;
             sleep(1);
-            if($break&&date('H:i')=='23:59')break;
+            if($this->break&&date('H:i')=='23:59')break;
         }
     }
 
