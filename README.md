@@ -17,6 +17,11 @@ B 站直播实用脚本
  3. 键入命令 `php index.php`, 试运行（可选）
  4. 在 `crontab` 中设置 `3 0 * * * php [path]/index.php > [path]/log.txt`
 
+## 高级
+可以在参数中设置 `$api->break=false;` 实现长时间运行，配合 systemd 食用最佳  
+在 `$api->callback=function(){}` 中可以添加自定义函数，实现 cookie 失效后的通知  
+这里推荐一个即时通知服务 https://sc.ftqq.com/3.version
+
 ## 注意事项
  1. 虽然脚本为 PHP，但由于需要长时间运行，因此不能通过访问网页来使用
  2. 需要额外安装 php-gd、php-curl 组件

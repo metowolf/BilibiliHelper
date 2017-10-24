@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.3
+ *  Version: 0.4.4
  */
 
 Class Bilibili{
@@ -16,7 +16,9 @@ Class Bilibili{
     public function __construct($cookie){
         date_default_timezone_set('Asia/Shanghai');
         $this->cookie=$cookie;
+        $this->msg='';
         $this->start=time();
+        $this->reset=time()+24*60*60;
         $this->lock['task']['flag']=false;
         $this->lock['sign']=$this->start;
         $this->lock['silver']=$this->start;
@@ -34,14 +36,15 @@ Class Bilibili{
 
     public function run(){
         while(true){
-            if(!$this->sign())return;
-            if(!$this->silver())return;
-            if(!$this->sendgift())return;
-            if(!$this->expheart())return;
-            if(!$this->giftheart())return;
+            if(!$this->sign())break;
+            if(!$this->silver())break;
+            if(!$this->sendgift())break;
+            if(!$this->expheart())break;
+            if(!$this->giftheart())break;
             sleep(1);
             if($this->break&&date('H:i')=='23:59')break;
         }
+        if(isset($this->callback))($this->callback)();
     }
 
     private function sign(){
@@ -150,7 +153,7 @@ Class Bilibili{
                 return false;
             }
             if($data['code']==-10017){
-                $this->lock['silver']+=24*60*60;
+                $this->lock['silver']+=60*60;
                 $this->log($data['msg'],'blue','宝箱');
                 return true;
             }
@@ -234,11 +237,11 @@ Class Bilibili{
         }
 
         $ans=eval("return $result;");
-        $this->log("(๑•̀ㅂ•́)و✧ $result = $ans","blue",'宝箱');
+        $this->log("好耶！ $result = $ans","blue",'宝箱');
         return $ans;
     }
 
-    private function log($message,$color='default',$type=''){
+    public function log($message,$color='default',$type=''){
         $colors = array(
             'none' => "",
             'black' => "\033[30m%s\033[0m",
@@ -253,13 +256,14 @@ Class Bilibili{
             'default' => "\033[39m%s\033[0m",
             'bg_red' => "\033[41m%s\033[0m",
         );
+        $this->msg=$message;
         $date=date('[Y-m-d H:i:s] ');
         if(!empty($type))$type="[$type] ";
         if(!$this->color)$color='none';
         echo sprintf($colors[$color],$date.$type.$message).PHP_EOL;
     }
 
-    private function curl($url,$data=null,$logout=true){
+    public function curl($url,$data=null,$logout=true){
         if($this->debug)$this->log('>>> '.$url,'lightgray');
         $curl=curl_init();
         curl_setopt($curl, CURLOPT_HEADER, 0);
