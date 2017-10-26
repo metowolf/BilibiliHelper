@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.4
+ *  Version: 0.4.5
  */
 
 Class Bilibili{
@@ -18,10 +18,9 @@ Class Bilibili{
         $this->cookie=$cookie;
         $this->msg='';
         $this->start=time();
-        $this->reset=time()+24*60*60;
         $this->lock['task']['flag']=false;
-        $this->lock['sign']=$this->start;
         $this->lock['silver']=$this->start;
+        $this->lock['sign']=strtotime(date('Y-m-d 00:10:00'));
         $this->lock['sendgift']=strtotime(date('Y-m-d 23:55:00'));
         $this->lock['expheart']=$this->start;
         $this->lock['expheart']+=(300-$this->lock['expheart']%300);
@@ -44,7 +43,11 @@ Class Bilibili{
             sleep(1);
             if($this->break&&date('H:i')=='23:59')break;
         }
-        if(isset($this->callback))($this->callback)();
+        if(isset($this->callback)){
+            ($this->callback)();
+            exit(1);
+        }
+        exit(0);
     }
 
     private function sign(){
