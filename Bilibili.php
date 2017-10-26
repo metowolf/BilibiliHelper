@@ -44,7 +44,7 @@ Class Bilibili{
             if($this->break&&date('H:i')=='23:59')break;
         }
         if(isset($this->callback)){
-            ($this->callback)();
+            call_user_func($this->callback);
             exit(1);
         }
         exit(0);
