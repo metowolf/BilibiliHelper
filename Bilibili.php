@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.4.5
+ *  Version: 0.5.0
  */
 
 Class Bilibili{
@@ -53,7 +53,7 @@ Class Bilibili{
     private function sign(){
         if(time()<$this->lock['sign'])return true;
 
-        $raw=$this->curl('http://api.live.bilibili.com/sign/doSign');
+        $raw=$this->curl('https://api.live.bilibili.com/sign/doSign');
         $data=json_decode($raw,true);
 
         if($data['code']==-101){
@@ -68,7 +68,7 @@ Class Bilibili{
         $this->log("尝试签到",'blue','签到');
 
         $this->curl('https://api.live.bilibili.com/giftBag/sendDaily?_='.round(microtime(true)*1000));
-        $raw=$this->curl('http://live.bilibili.com/sign/GetSignInfo');
+        $raw=$this->curl('https://live.bilibili.com/sign/GetSignInfo');
         $data=json_decode($raw,true);
         $this->log("获得 ".$data['data']['text'].$data['data']['specialText'],'green','签到');
         return true;
@@ -78,7 +78,7 @@ Class Bilibili{
         if(time()<$this->lock['expheart'])return true;
         $this->lock['expheart']+=5*60;
 
-        $raw=$this->curl('http://api.live.bilibili.com/User/userOnlineHeart');
+        $raw=$this->curl('https://api.live.bilibili.com/User/userOnlineHeart');
         $data=json_decode($raw,true);
 
         if($data['code']==-101){
@@ -86,7 +86,7 @@ Class Bilibili{
             return false;
         }
 
-        $raw=$this->curl('http://api.live.bilibili.com/User/getUserInfo?ts='.round(microtime(true)*1000));
+        $raw=$this->curl('https://api.live.bilibili.com/User/getUserInfo?ts='.round(microtime(true)*1000));
         $data=json_decode($raw,true);
         $level=$data['data']['user_level'];
         $a=$data['data']['user_intimacy'];
@@ -102,7 +102,7 @@ Class Bilibili{
         if(empty($this->token))return true;
 
         $this->log("开始翻动礼物",'green','投喂');
-        $raw=$this->curl('http://api.live.bilibili.com/gift/playerBag?_='.round(microtime(true)*1000));
+        $raw=$this->curl('https://api.live.bilibili.com/gift/playerBag?_='.round(microtime(true)*1000));
         $data=json_decode($raw,true);
         foreach($data['data'] as $vo){
             if($vo['expireat']!='今日')continue;
@@ -117,11 +117,11 @@ Class Bilibili{
                 'rnd'=>mt_rand()%10000000000,
                 'token'=>$this->token,
             );
-            $res=$this->curl('http://api.live.bilibili.com/giftBag/send',$payload);
+            $res=$this->curl('https://api.live.bilibili.com/giftBag/send',$payload);
             $res=json_decode($res,true);
 
             if($res['code'])$this->log("{$data['msg']}",'red','投喂');
-            else $this->log("成功向 http://live.bilibili.com/{$this->roomid} 投喂了 {$vo['gift_num']} 个 {$vo['gift_name']}",'green','投喂');
+            else $this->log("成功向 https://live.bilibili.com/{$this->roomid} 投喂了 {$vo['gift_num']} 个 {$vo['gift_name']}",'green','投喂');
         }
         return true;
     }
@@ -130,17 +130,25 @@ Class Bilibili{
         if(time()<$this->lock['giftheart'])return true;
         $this->lock['giftheart']+=5*60;
 
-        $raw=$this->curl('http://api.live.bilibili.com/eventRoom/heart?roomid='.$this->roomid);
+        $raw=$this->curl('https://api.live.bilibili.com/gift/v2/live/heart_gift_receive?roomid='.$this->roomid);
         $data=json_decode($raw,true);
 
         if($data['code']==-403){
             $this->log($data['msg'],'magenta','收礼');
-            if($data['data']['heart']==false)$this->lock['giftheart']+=24*60*60;
-            elseif($data['msg']=='非法心跳')$this->curl("http://api.live.bilibili.com/eventRoom/index?ruid=17561885");
+            $this->lock['giftheart']+=60*60;
+            $this->curl("https://api.live.bilibili.com/eventRoom/index?ruid=17561885");
             return true;
         }
-        $gift=end($data['data']['gift']);
-        $this->log("{$data['msg']}，礼物 {$gift['bagId']} 喜加一（{$gift['num']}）",'magenta','收礼');
+        if($data['data']['heart_status']==0){
+            $this->log('没有礼物可以领了呢','magenta','收礼');
+            $this->lock['giftheart']+=60*60;
+        }
+
+        if(isset($data['data']['gift_list'])){
+            foreach($data['data']['gift_list'] as $vo){
+                $this->log("{$data['msg']}，礼物 {$vo['gift_name']} ({$vo['day_num']}/{$vo['day_limit']})",'magenta','收礼');
+            }
+        }
         return true;
     }
 
@@ -148,7 +156,7 @@ Class Bilibili{
         if(time()<$this->lock['silver'])return true;
 
         if($this->lock['task']['flag']==false){
-            $raw=$this->curl("http://live.bilibili.com/FreeSilver/getCurrentTask");
+            $raw=$this->curl("https://live.bilibili.com/FreeSilver/getCurrentTask");
             $data=json_decode($raw,true);
 
             if($data['code']==-101){
@@ -175,7 +183,7 @@ Class Bilibili{
         $captcha=$this->captcha();
         $start=$this->lock['task']['start'];
         $end=$this->lock['task']['end'];
-        $raw=$this->curl("http://live.bilibili.com/freeSilver/getAward?time_start={$start}&time_end={$end}&captcha=$captcha");
+        $raw=$this->curl("https://live.bilibili.com/freeSilver/getAward?time_start={$start}&time_end={$end}&captcha=$captcha");
         $data=json_decode($raw,true);
 
         $this->lock['task']['flag']=false;
@@ -186,7 +194,7 @@ Class Bilibili{
     }
 
     private function captcha(){
-        $raw=$this->curl('http://live.bilibili.com/freeSilver/getCaptcha?ts='.time(),null,false);
+        $raw=$this->curl('https://live.bilibili.com/freeSilver/getCaptcha?ts='.time(),null,false);
         $image=imagecreatefromstring($raw);
         $width=imagesx($image);
         $height=imagesy($image);
@@ -277,7 +285,7 @@ Class Bilibili{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_REFERER, 'http://live.bilibili.com/'.$this->roomid);
+        curl_setopt($curl, CURLOPT_REFERER, 'https://live.bilibili.com/neptune/'.$this->roomid);
         curl_setopt($curl, CURLOPT_COOKIE, $this->cookie);
         curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         if(!empty($data)){

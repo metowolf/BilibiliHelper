@@ -11,7 +11,7 @@ B 站直播实用脚本
 ## TODO
  - 抽小电视
 
-## 安装
+## 简易使用
  1. 下载 `index.php`, `Bilibili.php` 两个文件，并放置在同一个目录下
  2. 修改 `index.php`, 替换 cookie 为 B 站直播间的 cookie
  3. 键入命令 `php index.php`, 试运行（可选）
@@ -22,8 +22,30 @@ B 站直播实用脚本
 在 `$api->callback=function(){}` 中可以添加自定义函数，实现 cookie 失效后的通知  
 这里推荐一个即时通知服务 https://sc.ftqq.com/3.version
 
+## systemd 脚本
+```
+# /usr/lib/systemd/system/bilibili.service
+[Unit]
+Description=Bilibili Helper Daemoin
+Documentation=https://i-meto.com/bilibili-silver/
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/php /path/to/index.php
+ExecStop=/bin/kill -HUP $MAINPID
+Restart=on-failure
+StartLimitInterval=1min
+StartLimitBurst=60
+LimitNOFILE=65534
+LimitNPROC=65534
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ## 注意事项
- 1. 虽然脚本为 PHP，但由于需要长时间运行，因此不能通过访问网页来使用
+ 1. 虽然脚本为 PHP，但由于需要保持长时间运行，因此不能通过直接访问网页来使用
  2. 需要额外安装 php-gd、php-curl 组件
 
 ## FAQ
@@ -41,8 +63,8 @@ $api->roomid='3746256'; // 主播房间号
 $api->roomuid='14739884'; // 主播 UID
 ```
 
-Q: 如何正确获取 cookie?
-A: 打开 http://live.bilibili.com/ ，登录后刷新一次，按 F12 在网络中类似 `live_h5_player?optype=` 的数据包中提取。
+Q: 更可靠的获取 cookie 方法?
+A: 需要点开一个直播间，按 F12 选 Network 选项卡，稍等大约 5 分钟后拿到 https://api.live.bilibili.com/eventRoom/ 类似的数据包，复制里面的 cookie 即可。
 
 ## License
 BilibiliHelper is under the MIT license.
