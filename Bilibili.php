@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.5.0
+ *  Version: 0.5.1
  */
 
 Class Bilibili{
@@ -41,7 +41,7 @@ Class Bilibili{
             if(!$this->expheart())break;
             if(!$this->giftheart())break;
             sleep(1);
-            if($this->break&&date('H:i')=='23:59')break;
+            if($this->break&&date('H:i')=='23:59')exit(0);
         }
         if(isset($this->callback)){
             call_user_func($this->callback);
@@ -297,5 +297,5 @@ Class Bilibili{
         curl_close($curl);
         if($this->debug&&$logout)$this->log('<<< '.$result,'yellow');
         return $result;
-	}
+    }
 }
