@@ -1,7 +1,7 @@
 <?php
 /**
  *  Author： METO
- *  Version: 0.5.1
+ *  Version: 0.5.2
  */
 
 Class Bilibili{
@@ -26,7 +26,7 @@ Class Bilibili{
         $this->lock['expheart']+=(300-$this->lock['expheart']%300);
         $this->lock['giftheart']=$this->start;
         $this->lock['giftheart']+=(300-$this->lock['giftheart']%300)+60;
-        preg_match('/LIVE_LOGIN_DATA=(.{40})/',$cookie,$token);
+        preg_match('/bili_jct=(.{32})/',$cookie,$token);
         $this->token=isset($token[1])?$token[1]:'';
         if(empty($this->token)){
             $this->log("cookie 不完整，部分功能已经禁用",'red','警告');
@@ -285,7 +285,7 @@ Class Bilibili{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_REFERER, 'https://live.bilibili.com/neptune/'.$this->roomid);
+        curl_setopt($curl, CURLOPT_REFERER, 'https://live.bilibili.com/'.$this->roomid);
         curl_setopt($curl, CURLOPT_COOKIE, $this->cookie);
         curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         if(!empty($data)){

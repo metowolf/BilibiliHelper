@@ -26,7 +26,7 @@ B 站直播实用脚本
 ```
 # /usr/lib/systemd/system/bilibili.service
 [Unit]
-Description=Bilibili Helper Daemoin
+Description=Bilibili Helper Daemon
 Documentation=https://i-meto.com/bilibili-silver/
 After=network.target
 
