@@ -11,16 +11,20 @@ B 站直播实用脚本
 ## TODO
  - 抽小电视
 
+## 更新日志
+ - 0.6.0: 更新大部分接口，新增参数自动检测
+
 ## 简易使用
  1. 下载 `index.php`, `Bilibili.php` 两个文件，并放置在同一个目录下
  2. 修改 `index.php`, 替换 cookie 为 B 站直播间的 cookie
  3. 键入命令 `php index.php`, 试运行（可选）
- 4. 在 `crontab` 中设置 `3 0 * * * php [path]/index.php > [path]/log.txt`
+ 4. 使用 `screen` 后台运行，或 `nohup`
 
 ## 高级
-可以在参数中设置 `$api->break=false;` 实现长时间运行，配合 systemd 食用最佳  
+用 systemd 食用最佳  
 在 `$api->callback=function(){}` 中可以添加自定义函数，实现 cookie 失效后的通知  
-这里推荐一个即时通知服务 https://sc.ftqq.com/3.version
+
+PS: 这里推荐一个即时通知服务 https://sc.ftqq.com/3.version
 
 ## systemd 脚本
 ```
@@ -34,7 +38,7 @@ After=network.target
 ExecStart=/usr/bin/php /path/to/index.php
 ExecStop=/bin/kill -HUP $MAINPID
 Restart=on-failure
-StartLimitInterval=1min
+StartLimitInterval=30min
 StartLimitBurst=60
 LimitNOFILE=65534
 LimitNPROC=65534
@@ -57,14 +61,13 @@ Q: 为什么会有 `PHP Parse error: syntax error, unexpected '[' ` 报错？
 A: 这是因为 PHP 低版本不支持数组中括号写法，建议升级到 PHP5.6+，脚本现已兼容。
 
 Q: 自动清理（投喂）过期礼物给谁？
-A: 默认投喂给我的直播间，如果需要的话，可以在 index.php 添加两行修改
+A: 默认投喂给我的直播间，如果需要的话，可以在 index.php 添加一行
 ```
 $api->roomid='3746256'; // 主播房间号
-$api->roomuid='14739884'; // 主播 UID
 ```
 
 Q: 更可靠的获取 cookie 方法?
-A: 需要点开一个直播间，按 F12 选 Network 选项卡，稍等大约 5 分钟后拿到 https://api.live.bilibili.com/eventRoom/ 类似的数据包，复制里面的 cookie 即可。
+A: 需要点开一个直播间，按 F12 选 Network 选项卡，稍等大约 5 分钟后拿到 https://api.live.bilibili.com/ 开头的数据包，复制里面的 cookie 即可。
 
 ## License
 BilibiliHelper is under the MIT license.
