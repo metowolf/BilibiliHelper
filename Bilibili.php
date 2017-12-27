@@ -127,7 +127,7 @@ Class Bilibili
         // 签到成功
         $this->log($data['msg'], 'blue', '签到');
 
-        $api = $this->prefix . 'giftBag/sendDaily' . round(microtime(true) * 1000);
+        $api = $this->prefix . 'giftBag/sendDaily?_=' . round(microtime(true) * 1000);
         $raw = $this->curl($api);
         $data = json_decode($raw, true);
         if ($data['code'] != 0) {
