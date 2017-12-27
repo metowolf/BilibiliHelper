@@ -83,7 +83,6 @@ Class Bilibili
     public function run()
     {
         $this->init();
-        print_r($this);
         for ($idx=0; $idx<3; $idx++) {
             while(true) {
                 if(!$this->sign())break;
