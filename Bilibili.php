@@ -2,7 +2,7 @@
 /**
  *  Website: https://i-meto.com/
  *  Author: METO
- *  Version: 0.6.0
+ *  Version: 0.6.1
  */
 
 
@@ -186,7 +186,7 @@ Class Bilibili
         }
 
         foreach ($data['data']['list'] as $vo){
-            if ($vo['expire_at']>time()+3600) continue;
+            if (abs($vo['expire_at']-time())>3600) continue;
             $payload = array(
                 'uid'           => $this->uid,
                 'gift_id'       => $vo['gift_id'],
