@@ -2,11 +2,11 @@
 /**
  *  Website: https://i-meto.com/
  *  Author: METO
- *  Version: 0.6.1
+ *  Version: 0.6.2
  */
 
 
-Class Bilibili
+class Bilibili
 {
     // 主播房间 id
     public $roomid = '3746256';
@@ -84,7 +84,7 @@ Class Bilibili
     {
         $this->init();
         for ($idx=0; $idx<3; $idx++) {
-            while(true) {
+            while (true) {
                 if(!$this->sign())break;
                 if(!$this->heart())break;
                 if(!$this->silver())break;
@@ -95,7 +95,7 @@ Class Bilibili
             sleep(10);
         }
 
-        if(isset($this->callback)){
+        if (isset($this->callback)) {
             call_user_func($this->callback);
             exit(1);
         }
@@ -185,8 +185,10 @@ Class Bilibili
             return false;
         }
 
-        foreach ($data['data']['list'] as $vo){
-            if (abs($vo['expire_at']-time())>3600) continue;
+        foreach ($data['data']['list'] as $vo) {
+            if (abs($vo['expire_at']-time())>3600) {
+                continue;
+            }
             $payload = array(
                 'uid'           => $this->uid,
                 'gift_id'       => $vo['gift_id'],
@@ -207,15 +209,18 @@ Class Bilibili
             $res = $this->curl($api, $payload);
             $res = json_decode($res, true);
 
-            if ($res['code']) $this->log("{$res['msg']}",'red','投喂');
-            else $this->log("成功向 https://live.bilibili.com/{$this->roomid} 投喂了 {$vo['gift_num']} 个 {$vo['gift_name']}", 'green', '投喂');
+            if ($res['code']) {
+                $this->log("{$res['msg']}", 'red', '投喂');
+            } else {
+                $this->log("成功向 https://live.bilibili.com/{$this->roomid} 投喂了 {$vo['gift_num']} 个 {$vo['gift_name']}", 'green', '投喂');
+            }
         }
         return true;
     }
 
     private function giftheart()
     {
-        if (time()<$this->lock['giftheart']){
+        if (time()<$this->lock['giftheart']) {
             return true;
         }
         $this->lock['giftheart'] += 5*60;
@@ -236,26 +241,27 @@ Class Bilibili
         }
 
         if ($data['data']['heart_status'] == 0) {
-            $this->log('没有礼物可以领了呢','magenta','收礼');
+            $this->log('没有礼物可以领了呢', 'magenta', '收礼');
             $this->lock['giftheart'] += 60*60;
         }
 
-        if(isset($data['data']['gift_list'])){
-            foreach($data['data']['gift_list'] as $vo){
-                $this->log("{$data['msg']}，礼物 {$vo['gift_name']} ({$vo['day_num']}/{$vo['day_limit']})",'magenta','收礼');
+        if (isset($data['data']['gift_list'])) {
+            foreach ($data['data']['gift_list'] as $vo) {
+                $this->log("{$data['msg']}，礼物 {$vo['gift_name']} ({$vo['day_num']}/{$vo['day_limit']})", 'magenta', '收礼');
             }
         }
         return true;
     }
 
-    private function silver(){
+    private function silver()
+    {
         if (time() < $this->lock['silver']) {
             return true;
         }
 
         if (!isset($this->temp['task'])) {
             // 查询宝箱数量
-            $api = $this->prefix . 'FreeSilver/getCurrentTask';
+            $api = $this->prefix . 'lottery/v1/SilverBox/getCurrentTask';
             $raw = $this->curl($api);
             $data = json_decode($raw, true);
             // 今日已经领完
@@ -276,16 +282,18 @@ Class Bilibili
                 'end' => $data['data']['time_end'],
             );
             $this->lock['silver'] = $data['data']['time_end'] + 5;
-            $this->log(sprintf("等待 %s 领取",
+            $this->log(sprintf(
+                "等待 %s 领取",
                 date('H:i:s', $this->lock['silver'])
-            ),'blue','宝箱');
+            ), 'blue', '宝箱');
 
             return true;
         }
 
         $captcha = $this->captcha();
 
-        $api = $this->prefix . sprintf('freeSilver/getAward?time_start=%s&time_end=%s&captcha=%s',
+        $api = $this->prefix . sprintf(
+            'lottery/v1/SilverBox/getAward?time_start=%s&end_time=%s&captcha=%s',
             $this->temp['task']['start'],
             $this->temp['task']['end'],
             $captcha
@@ -295,8 +303,7 @@ Class Bilibili
 
         if ($data['code'] != 0) {
             $this->log($data['msg'], 'bg_red', '宝箱');
-        }
-        else {
+        } else {
             $this->log("领取成功，silver: {$data['data']['silver']}(+{$data['data']['awardSilver']})", 'cyan', '宝箱');
         }
 
@@ -305,24 +312,37 @@ Class Bilibili
         return true;
     }
 
-    private function captcha(){
-        $this->log("开始做小学生算术","blue",'宝箱');
+    public function captcha()
+    {
+        $this->log("开始做幼儿算术", "blue", '宝箱');
 
-        $api = $this->prefix . 'freeSilver/getCaptcha?ts='.time();
-        $raw = $this->curl($api, null, false);
-        $image = imagecreatefromstring($raw);
+        $api = $this->prefix . 'lottery/v1/SilverBox/getCaptcha?ts='.time();
+        $raw = $this->curl($api);
+        $data = json_decode($raw, true);
+        $exploded = explode(',', $data['data']['img'], 2);
+        $encoded = $exploded[1];
+        $decoded = base64_decode($encoded);
+
+        $image = imagecreatefromstring($decoded);
         $width = imagesx($image);
         $height = imagesy($image);
-        for($i=0;$i<$height;$i++)
-            for($j=0;$j<$width;$j++)
-                $grey[$i][$j]=(imagecolorat($image,$j,$i)>>16)&0xFF;
-        for($i=0;$i<$width;$i++)$vis[$i]=0;
-        for($i=0;$i<$height;$i++)
-            for($j=0;$j<$width;$j++)
+        for ($i=0;$i<$height;$i++) {
+            for ($j=0;$j<$width;$j++) {
+                $grey[$i][$j]=(imagecolorat($image, $j, $i)>>16)&0xFF;
+            }
+        }
+        for ($i=0;$i<$width;$i++) {
+            $vis[$i]=0;
+        }
+        for ($i=0;$i<$height;$i++) {
+            for ($j=0;$j<$width;$j++) {
                 $vis[$j]|=$grey[$i][$j]<220;
-        for($i=0;$i<$height;$i+=2){
-            for($j=0;$j<$width;$j+=2)
+            }
+        }
+        for ($i=0;$i<$height;$i+=2) {
+            for ($j=0;$j<$width;$j+=2) {
                 echo $grey[$i][$j]<220?'■':'□';
+            }
             echo "\n";
         }
 
@@ -342,23 +362,29 @@ Class Bilibili
         );
 
         $result='';
-        for($k=0;$k<$width;$k++)if($vis[$k]){
-            $L=$R=$k;
-            while($vis[$R]==1)$R++;
-            $str='';
-            for($j=$L;$j<$R;$j++)
-                for($i=4;$i<=34;$i++)
-                    $str.=$grey[$i][$j]<220?'1':'0';
-            $max=0;
-            foreach($OCR as $key=>$vo){
-                similar_text($str,$vo,$per);
-                if($per>$max){
-                    $max=$per;
-                    $ch=$key;
+        for ($k=0;$k<$width;$k++) {
+            if ($vis[$k]) {
+                $L=$R=$k;
+                while ($vis[$R]==1) {
+                    $R++;
                 }
+                $str='';
+                for ($j=$L;$j<$R;$j++) {
+                    for ($i=4;$i<=34;$i++) {
+                        $str.=$grey[$i][$j]<220?'1':'0';
+                    }
+                }
+                $max=0;
+                foreach ($OCR as $key=>$vo) {
+                    similar_text($str, $vo, $per);
+                    if ($per>$max) {
+                        $max=$per;
+                        $ch=$key;
+                    }
+                }
+                $result.=$ch;
+                $k=$R;
             }
-            $result.=$ch;
-            $k=$R;
         }
 
         $ans = eval("return $result;");
@@ -366,7 +392,7 @@ Class Bilibili
         return $ans;
     }
 
-    public function log($message,$color='default',$type='')
+    public function log($message, $color='default', $type='')
     {
         $colors = array(
             'none' => "",
@@ -384,12 +410,16 @@ Class Bilibili
         );
         $this->msg = $message;
         $date = date('[Y-m-d H:i:s] ');
-        if(!empty($type)) $type="[$type] ";
-        if(!$this->color) $color='none';
+        if (!empty($type)) {
+            $type="[$type] ";
+        }
+        if (!$this->color) {
+            $color='none';
+        }
         echo sprintf($colors[$color], $date . $type . $message) . PHP_EOL;
     }
 
-    public function curl($url,$data=null,$log=true)
+    public function curl($url, $data=null, $log=true)
     {
         if ($this->debug) {
             $this->log('>>> ' . $url, 'lightgray');
