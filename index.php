@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.20 (0.7.0)
+ * Version 18.04.20 (0.7.1)
  *
  * Copyright 2018, metowolf
  * Released under the MIT license

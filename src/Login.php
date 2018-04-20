@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.20
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -17,15 +17,32 @@ use metowolf\Bilibili\Log;
 
 class Login
 {
-    public static function getAccessKey($value='')
+    public static function getAccessKey()
     {
         $access_key = getenv('ACCESS_TOKEN');
         if (empty($access_key) || !self::checkInfo()) {
-            Log::warning('access_token expired! Try to renew...');
+            Log::warning('AccessToken expired! Try to renew...');
             self::login();
         } else {
-            Log::info('access_token OK!');
+            Log::info('check AccessToken OK!');
             return $access_key;
+        }
+    }
+
+    public static function refreshAccessKey()
+    {
+        $access_key = getenv('ACCESS_TOKEN');
+        $refresh_token = getenv('REFRESH_TOKEN');
+
+        $payload = [
+            'refresh_token' => $refresh_token,
+        ];
+        $data = Curl::post('https://passport.bilibili.com/api/oauth2/refreshToken', Sign::api($payload));
+        $data = json_decode($data, true);
+
+        if (isset($data['code']) && $data['code']) {
+            Log::warning('refresh AccessToken failed! Error message: '.$data['message']);
+            die();
         }
     }
 

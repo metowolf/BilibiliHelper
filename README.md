@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.7.0-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.7.1-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -15,11 +15,11 @@ B 站直播实用脚本
 |plugin   |version  |description   |
 |---------|---------|--------------|
 |Daily    |18.04.19 |每日背包奖励    |
-|GiftSend |18.04.19 |自动清空过期礼物 |
+|GiftSend |18.04.20 |自动清空过期礼物 |
 |Heart    |18.04.19 |双端直播间心跳  |
-|Login    |18.04.19 |帐号登录组件    |
+|Login    |18.04.20 |帐号登录组件    |
 |SignIn   |18.04.19 |每日签到       |
-|Silver   |18.04.19 |自动领宝箱     |
+|Silver   |18.04.20 |自动领宝箱     |
 |Task     |18.04.19 |每日任务       |
 
 
@@ -132,7 +132,7 @@ APP_CALLBACK="https://sc.ftqq.com/<SCKEY>.send?text={message}"
 
 # TelegramBot
 # 自行替换 <TOKEN> <CHAR_ID>
-APP_CALLBACK="http://api.telegram.org/<TOKEN>/sendMessage?chat_id=<CHAR_ID>&text={message}"
+APP_CALLBACK="http://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAR_ID>&text={message}"
 ```
 
 `{message}` 部分会自动替换成错误信息，接口采用 get 方式发送

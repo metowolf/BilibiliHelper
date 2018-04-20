@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.20
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -73,9 +73,11 @@ class GiftSend
             Log::warning('背包查看失败! Error message: '.$data['message']);
         }
 
-        foreach ($data['data']['list'] as $vo) {
-            if ($vo['expire_at'] >= $data['data']['time'] && $vo['expire_at'] <= $data['data']['time'] + 3600) {
-                self::send($vo);
+        if (isset($data['data']['list'])) {
+            foreach ($data['data']['list'] as $vo) {
+                if ($vo['expire_at'] >= $data['data']['time'] && $vo['expire_at'] <= $data['data']['time'] + 3600) {
+                    self::send($vo);
+                }
             }
         }
 

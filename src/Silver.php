@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.20
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -35,16 +35,14 @@ class Silver
 
     protected static function pushTask()
     {
-        sleep(5);
-
         $payload = [];
         $data = Curl::get('https://api.live.bilibili.com/mobile/freeSilverAward', Sign::api($payload));
         $data = json_decode($data, true);
 
-
         if (isset($data['code']) && $data['code']) {
-            Log::error('领取宝箱失败！Error message: '.$data['message']);
-            die();
+            Log::warning('领取宝箱失败！', $data['message']);
+            self::$lock = time() + 60;
+            return;
         }
 
         Log::info("好耶，领取成功，silver: {$data['data']['silver']}(+{$data['data']['awardSilver']})");
@@ -74,6 +72,6 @@ class Silver
         Log::info("等待 {$data['data']['minute']} 分钟");
 
         self::$task = $data['data']['time_start'];
-        self::$lock = $data['data']['time_end'];
+        self::$lock = time() + $data['data']['minute'] * 60 + 5;
     }
 }
