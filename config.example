@@ -1,0 +1,15 @@
+# 帐号
+APP_USER=
+# 密码
+APP_PASS=
+
+# 自动生成
+ACCESS_TOKEN=
+REFRESH_TOKEN=
+
+# 调试模式
+APP_DEBUG=true
+# 直播间ID，用于礼物赠送
+ROOM_ID=3746256
+# 错误回调地址
+APP_CALLBACK="http://www.example.com/api.send?text={message}"
