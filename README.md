@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.7.1-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.7.2-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -14,13 +14,12 @@ B 站直播实用脚本
 
 |plugin   |version  |description   |
 |---------|---------|--------------|
-|Daily    |18.04.19 |每日背包奖励    |
-|GiftSend |18.04.20 |自动清空过期礼物 |
-|Heart    |18.04.19 |双端直播间心跳  |
-|Login    |18.04.20 |帐号登录组件    |
-|SignIn   |18.04.19 |每日签到       |
-|Silver   |18.04.20 |自动领宝箱     |
-|Task     |18.04.19 |每日任务       |
+|Daily    |18.04.21 |每日背包奖励    |
+|GiftSend |18.04.21 |自动清空过期礼物 |
+|Heart    |18.04.21 |双端直播间心跳  |
+|Login    |18.04.21 |帐号登录组件    |
+|Silver   |18.04.21 |自动领宝箱     |
+|Task     |18.04.21 |每日任务       |
 
 
 ## 未完成功能
@@ -59,7 +58,7 @@ $ composer install
 $ php index.php
 ```
 
-![](https://i.loli.net/2018/04/20/5ad986fa2c442.png)
+<p align="center"><img width="680px" src="https://i.loli.net/2018/04/21/5adb497dc3ece.png"></p>
 
 ## 升级指南
  1. 进入项目目录
@@ -117,7 +116,7 @@ stdout_logfile=/tmp/bilibili.log
 ```
 
 ## 报错通知问题
-脚本出现 error 级别的报错，会使用调用通知地址进行提醒，这里推荐两个服务
+脚本出现 error 级别的报错，会调用通知地址进行提醒，这里推荐两个服务
 
 |服务|官网|
 |---|---|

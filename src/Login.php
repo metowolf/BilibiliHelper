@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.20
+ * Version 18.04.21
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -17,33 +17,93 @@ use metowolf\Bilibili\Log;
 
 class Login
 {
-    public static function getAccessKey()
+    protected static $lock = 0;
+
+    public static function run()
     {
-        $access_key = getenv('ACCESS_TOKEN');
-        if (empty($access_key) || !self::checkInfo()) {
-            Log::warning('AccessToken expired! Try to renew...');
+        Log::info('正在装载终端');
+        if (empty(getenv('ACCESS_TOKEN'))) {
+            Log::info('令牌载入中...');
             self::login();
-        } else {
-            Log::info('check AccessToken OK!');
-            return $access_key;
         }
+        Log::info('正在检查令牌合法性...');
+        if (!self::info()) {
+            Log::warning('令牌即将过期');
+            Log::info('申请更换令牌中...');
+            if (!self::refresh()) {
+                Log::warning('无效令牌，正在重新申请...');
+                self::login();
+            }
+        }
+        self::$lock = time() + 3600;
     }
 
-    public static function refreshAccessKey()
+    public static function check()
     {
-        $access_key = getenv('ACCESS_TOKEN');
+        if (self::$lock > time()) {
+            return;
+        }
+
+        if (!self::info()) {
+            Log::warning('令牌即将过期');
+            Log::info('申请更换令牌中...');
+            if (!self::refresh()) {
+                Log::warning('无效令牌，正在重新申请...');
+                self::login();
+            }
+        }
+
+        self::$lock = time() + 3600;
+    }
+
+    protected static function info()
+    {
+        $access_token = getenv('ACCESS_TOKEN');
+
+        $payload = [
+            'access_token' => $access_token,
+        ];
+        $data = Curl::get('https://passport.bilibili.com/api/oauth2/info', Sign::api($payload));
+        $data = json_decode($data, true);
+
+        if (isset($data['code']) && $data['code']) {
+            Log::error('检查令牌失败', ['msg' => $data['message']]);
+            return false;
+        }
+
+        Log::info('令牌有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
+
+        return $data['data']['expires_in'] > 86400;
+    }
+
+    public static function refresh()
+    {
+        $access_token = getenv('ACCESS_TOKEN');
         $refresh_token = getenv('REFRESH_TOKEN');
 
         $payload = [
+            'access_token' => $access_token,
             'refresh_token' => $refresh_token,
         ];
         $data = Curl::post('https://passport.bilibili.com/api/oauth2/refreshToken', Sign::api($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('refresh AccessToken failed! Error message: '.$data['message']);
-            die();
+            Log::error('重新生成令牌失败', ['msg' => $data['message']]);
+            return false;
         }
+
+        Log::info('令牌生成完毕!');
+
+        $access_token = $data['data']['access_token'];
+        self::writeNewEnvironmentFileWith('ACCESS_TOKEN', $access_token);
+        Log::info(' > access token: '.$access_token);
+
+        $refresh_token = $data['data']['refresh_token'];
+        self::writeNewEnvironmentFileWith('REFRESH_TOKEN', $refresh_token);
+        Log::info(' > refresh token: '.$refresh_token);
+
+        return true;
     }
 
     protected static function login()
@@ -51,22 +111,32 @@ class Login
         $user = getenv('APP_USER');
         $pass = getenv('APP_PASS');
         if (empty($user) || empty($pass)) {
-            Log::error('empty APP_USER and APP_PASS!');
+            Log::error('空白的帐号和口令!');
             die();
         }
+
+        // get PublicKey
+
+        Log::info('正在载入安全模块...');
 
         $payload = [];
         $data = Curl::post('https://passport.bilibili.com/api/oauth2/getKey', Sign::api($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::error('get public key failed! Error message: '.$data['message']);
+            Log::error('公钥获取失败', ['msg' => $data['message']]);
             die();
+        } else {
+            Log::info('安全模块载入完毕！');
         }
 
         $public_key = $data['data']['key'];
         $hash = $data['data']['hash'];
         openssl_public_encrypt($hash.$pass, $crypt, $public_key);
+
+        // login
+
+        Log::info('正在获取令牌...');
 
         $payload = [
             'subid' => 1,
@@ -80,30 +150,21 @@ class Login
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::error('login failed! Error message: '.$data['message']);
+            Log::error('登录失败', ['msg' => $data['message']]);
             die();
         }
 
-        Log::info('success!');
+        Log::info('令牌获取成功!');
 
         $access_token = $data['data']['token_info']['access_token'];
         self::writeNewEnvironmentFileWith('ACCESS_TOKEN', $access_token);
-        Log::info('access token: '.$access_token);
+        Log::info(' > access token: '.$access_token);
 
         $refresh_token = $data['data']['token_info']['refresh_token'];
         self::writeNewEnvironmentFileWith('REFRESH_TOKEN', $refresh_token);
-        Log::info('refresh token: '.$refresh_token);
+        Log::info(' > refresh token: '.$refresh_token);
 
         return;
-    }
-
-    protected static function checkInfo()
-    {
-        $payload = [];
-        $data = Curl::get('https://account.bilibili.com/api/myinfo/v2', Sign::api($payload));
-        $data = json_decode($data, true);
-
-        return !isset($data['code']) || $data['code'] == 0;
     }
 
     protected static function writeNewEnvironmentFileWith($key, $value)

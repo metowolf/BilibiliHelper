@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.20
+ * Version 18.04.21
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -58,7 +58,7 @@ class Silver
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code'] == -10017) {
-            Log::warning($data['message']);
+            Log::notice($data['message']);
             self::$lock = time() + 3600;
             return;
         }

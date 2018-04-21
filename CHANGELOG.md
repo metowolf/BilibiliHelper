@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.7.2 (2018-04-22)
+
+### Added
+- 新增令牌刷新机制
+- 新增日志通知级别设置
+
+### Changed
+- 调整部分日志文案
+- 修正 README 的错误 ([#29](https://github.com/metowolf/BilibiliHelper/pull/29))
+
+### Fixed
+- 修复每日任务无法领取的问题
+- 修复部分逻辑错误
+
 
 ## v0.7.1 (2018-04-21)
 

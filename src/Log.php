@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.21
  *
  * Copyright 2018, laverboy & metowolf
  * https://gist.github.com/laverboy/fd0a32e9e4e9fbbf9584
@@ -39,30 +39,43 @@ class Log {
 		self::$instance = $logger;
 	}
 
-	public static function debug($message, array $context = []){
+	public static function debug($message, array $context = [])
+	{
 		self::getLogger()->addDebug($message, $context);
+		self::callback(Logger::DEBUG ,'DEBUG', $message);
 	}
 
-	public static function info($message, array $context = []){
+	public static function info($message, array $context = [])
+	{
 		self::getLogger()->addInfo($message, $context);
+		self::callback(Logger::INFO, 'INFO', $message);
 	}
 
-	public static function notice($message, array $context = []){
+	public static function notice($message, array $context = [])
+	{
 		self::getLogger()->addNotice($message, $context);
+		self::callback(Logger::NOTICE, 'NOTICE', $message);
 	}
 
-	public static function warning($message, array $context = []){
+	public static function warning($message, array $context = [])
+	{
 		self::getLogger()->addWarning($message, $context);
+		self::callback(Logger::WARNING, 'WARNING', $message);
 	}
 
-	public static function error($message, array $context = []){
+	public static function error($message, array $context = [])
+	{
 		self::getLogger()->addError($message, $context);
-		self::callback($message);
+		self::callback(Logger::ERROR, 'ERROR', $message);
 	}
 
-	public static function callback($message){
-		$url = str_replace('{message}', urlencode($message), getenv('APP_CALLBACK'));
-		Curl::get($url);
+	public static function callback($levelId, $level, $message){
+		$callback_level = empty(getenv('APP_CALLBACK_LEVEL')) ? (Logger::ERROR) :intval(getenv('APP_CALLBACK_LEVEL'));
+		if ($levelId >= $callback_level) {
+			$url = str_replace('{level}', $level, getenv('APP_CALLBACK'));
+			$url = str_replace('{message}', urlencode($message), getenv('APP_CALLBACK'));
+			Curl::get($url);
+		}
 	}
 
 }

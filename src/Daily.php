@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.21
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -37,9 +37,10 @@ class Daily
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('每日礼包领取失败! Error message: '.$data['message']);
+            Log::warning('每日礼包领取失败!', ['msg' => $data['message']]);
+        } else {
+            Log::info('每日礼包领取成功');
         }
-        Log::info($data['data']['bag_toast']['toast_message']);
     }
 
 }
