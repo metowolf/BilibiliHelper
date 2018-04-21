@@ -131,7 +131,7 @@ APP_CALLBACK="https://sc.ftqq.com/<SCKEY>.send?text={message}"
 
 # TelegramBot
 # 自行替换 <TOKEN> <CHAR_ID>
-APP_CALLBACK="http://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAR_ID>&text={message}"
+APP_CALLBACK="https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAR_ID>&text={message}"
 ```
 
 `{message}` 部分会自动替换成错误信息，接口采用 get 方式发送
