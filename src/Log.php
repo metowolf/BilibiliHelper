@@ -93,4 +93,5 @@ class Log
             Curl::get($url);
         }
     }
+
 }
