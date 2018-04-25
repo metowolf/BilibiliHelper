@@ -1,0 +1,27 @@
+{
+    "name": "metowolf/bilibili",
+    "version": "0.7.0",
+    "description": "B 站自动领瓜子、直播挂机脚本",
+    "type": "project",
+    "require": {
+        "php": ">=5.4.0",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "vlucas/phpdotenv": "^2.4",
+        "monolog/monolog": "^1.23",
+        "bramus/monolog-colored-line-formatter": "^2.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "metowolf",
+            "email": "i@i-meto.com",
+            "homepage": "https://i-meto.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "metowolf\\Bilibili\\": "src/"
+        }
+    }
+}

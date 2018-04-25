@@ -1,0 +1,37 @@
+# 帐号
+APP_USER=
+
+# 多账号区别输出
+APP_MULTIPLE=false
+# 账号别名，如果为空则默认使用登陆账号作为标示
+APP_USER_IDENTITY=
+
+# 密码
+APP_PASS=
+
+# 自动生成
+ACCESS_TOKEN=
+REFRESH_TOKEN=
+
+# 调试模式
+APP_DEBUG=true
+
+# 直播间ID，用于礼物赠送
+ROOM_ID=3746256
+
+# 日志回调地址
+# 渲染参数
+# {level} 日志等级
+# {account} 账号标识符
+# {message} 日志信息
+APP_CALLBACK="http://www.example.com/api.send?text=[{level}]: {message}"
+
+# 错误回调级别
+#
+#   DEBUG   100
+#   INFO    200
+#   NOTICE  250
+#   WARNING 300
+#   ERROR   400
+#
+APP_CALLBACK_LEVEL=400
