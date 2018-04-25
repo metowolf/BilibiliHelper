@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.7.2-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.7.3-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -17,7 +17,7 @@ B 站直播实用脚本
 |Daily    |18.04.21 |每日背包奖励    |
 |GiftSend |18.04.21 |自动清空过期礼物 |
 |Heart    |18.04.21 |双端直播间心跳  |
-|Login    |18.04.21 |帐号登录组件    |
+|Login    |18.04.25 |帐号登录组件    |
 |Silver   |18.04.21 |自动领宝箱     |
 |Task     |18.04.21 |每日任务       |
 
