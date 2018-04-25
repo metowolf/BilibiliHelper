@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.04.21
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -40,10 +40,10 @@ class Heart
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('PC live Heart failed! ', $data['message']);
+            Log::warning('WEB 端的直播间心跳停止惹～', ['msg' => $data['message']]);
+        } else {
+            Log::info('WEB 心跳正常');
         }
-
-        Log::info('PC live Heart OK!');
     }
 
     protected static function mobile()
@@ -55,9 +55,9 @@ class Heart
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('mobile live Heart failed! ', $data['message']);
+            Log::warning('APP 端的直播间心跳停止惹～', ['msg' => $data['message']]);
+        } else {
+            Log::info('APP 心跳正常');
         }
-
-        Log::info('mobile live Heart OK!');
     }
 }

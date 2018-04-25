@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.20
+ * Version 18.04.21
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -24,13 +24,15 @@ class GiftSend
 
     protected static function getRoomInfo()
     {
+        Log::info('正在生成直播间信息...');
+
         $payload = [];
         $data = Curl::get('https://account.bilibili.com/api/myinfo/v2', Sign::api($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('获取帐号信息失败! Error message: '.$data['message']);
-            Log::warning('清空礼物功能禁用! ');
+            Log::warning('获取帐号信息失败!', ['msg' => $data['message']]);
+            Log::warning('清空礼物功能禁用!');
             self::$lock = time() + 100000000;
             return;
         }
@@ -44,11 +46,13 @@ class GiftSend
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('获取主播房间号失败! Error message: '.$data['message']);
-            Log::warning('清空礼物功能禁用! ');
+            Log::warning('获取主播房间号失败!', ['msg' => $data['message']]);
+            Log::warning('清空礼物功能禁用!');
             self::$lock = time() + 100000000;
             return;
         }
+
+        Log::info('直播间信息生成完毕!');
 
         self::$ruid = $data['data']['uid'];
         self::$roomid = $data['data']['room_id'];
@@ -57,7 +61,6 @@ class GiftSend
     public static function run()
     {
         if (empty(self::$ruid)) {
-            Log::info('正在补全直播间信息! ');
             self::getRoomInfo();
         }
 
@@ -70,13 +73,14 @@ class GiftSend
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('背包查看失败! Error message: '.$data['message']);
+            Log::warning('背包查看失败!', ['msg' => $data['message']]);
         }
 
         if (isset($data['data']['list'])) {
             foreach ($data['data']['list'] as $vo) {
                 if ($vo['expire_at'] >= $data['data']['time'] && $vo['expire_at'] <= $data['data']['time'] + 3600) {
                     self::send($vo);
+                    sleep(3);
                 }
             }
         }
@@ -102,9 +106,9 @@ class GiftSend
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('送礼失败! Error message: '.$data['message']);
+            Log::warning('送礼失败!', ['msg' => $data['message']]);
         } else {
-            Log::info("成功向 https://live.bilibili.com/{$payload['biz_id']} 投喂了 {$value['gift_num']} 个 {$value['gift_name']}");
+            Log::info("成功向 {$payload['biz_id']} 投喂了 {$value['gift_num']} 个{$value['gift_name']}");
         }
     }
 }
