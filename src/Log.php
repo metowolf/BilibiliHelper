@@ -73,7 +73,7 @@ class Log {
 		$callback_level = empty(getenv('APP_CALLBACK_LEVEL')) ? (Logger::ERROR) :intval(getenv('APP_CALLBACK_LEVEL'));
 		if ($levelId >= $callback_level) {
 			$url = str_replace('{level}', $level, getenv('APP_CALLBACK'));
-			$url = str_replace('{message}', urlencode($message), getenv('APP_CALLBACK'));
+			$url = str_replace('{message}', urlencode($message), $url);
 			Curl::get($url);
 		}
 	}

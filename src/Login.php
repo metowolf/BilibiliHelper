@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.04.25
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -41,8 +41,10 @@ class Login
     public static function check()
     {
         if (self::$lock > time()) {
-            return;
+            return true;
         }
+
+        self::$lock = time() + 7200;
 
         if (!self::info()) {
             Log::warning('令牌即将过期');
@@ -51,9 +53,10 @@ class Login
                 Log::warning('无效令牌，正在重新申请...');
                 self::login();
             }
+            return false;
         }
 
-        self::$lock = time() + 3600;
+        return true;
     }
 
     protected static function info()

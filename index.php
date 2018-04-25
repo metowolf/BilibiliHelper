@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21 (0.7.2)
+ * Version 18.04.25 (0.7.3)
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -35,7 +35,9 @@ $dotenv->overload();
 
 // run
 while (true) {
-    Login::check();
+    if (!Login::check()) {
+        $dotenv->overload();
+    }
     Daily::run();
     GiftSend::run();
     Heart::run();
