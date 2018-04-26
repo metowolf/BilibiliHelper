@@ -43,7 +43,7 @@ class Log
     private static function prefix()
     {
         if (getenv('APP_MULTIPLE') == 'true') {
-            return '[' . empty($t = getenv('APP_USER_IDENTITY')) ? getenv('APP_USER') : $t . ']';
+            return '[' . (empty($t = getenv('APP_USER_IDENTITY')) ? getenv('APP_USER') : $t) . ']';
         }
         return '';
     }

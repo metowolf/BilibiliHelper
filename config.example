@@ -19,8 +19,12 @@ APP_DEBUG=true
 # 直播间ID，用于礼物赠送
 ROOM_ID=3746256
 
-# 错误回调地址
-APP_CALLBACK="http://www.example.com/api.send?text={account}[{level}]: {message}"
+# 日志回调地址
+# 渲染参数
+# {level} 日志等级
+# {account} 账号标识符
+# {message} 日志信息
+APP_CALLBACK="http://www.example.com/api.send?text=[{level}]: {message}"
 
 # 错误回调级别
 #
