@@ -21,7 +21,7 @@ class Curl
             'Accept-Language' => 'zh-cn',
             'Connection'      => 'keep-alive',
             'Content-Type'    => 'application/x-www-form-urlencoded',
-            'User-Agent'      => 'User-Agent: bili-universal/6620 CFNetwork/897.15 Darwin/17.5.0',
+            'User-Agent'      => 'User-Agent: bili-universal/6670 CFNetwork/897.15 Darwin/17.5.0',
     );
 
     public static function post($url, $payload = null)

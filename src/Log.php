@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.04.28
  *
  * Copyright 2018, laverboy & metowolf
  * https://gist.github.com/laverboy/fd0a32e9e4e9fbbf9584
@@ -85,7 +85,7 @@ class Log
 
     public static function callback($levelId, $level, $message)
     {
-        $callback_level = empty(getenv('APP_CALLBACK_LEVEL')) ? (Logger::ERROR) : intval(getenv('APP_CALLBACK_LEVEL'));
+        $callback_level = (getenv('APP_CALLBACK_LEVEL') === false) ? (Logger::ERROR) : intval(getenv('APP_CALLBACK_LEVEL'));
         if ($levelId >= $callback_level) {
             $url = str_replace('{account}', self::prefix(), getenv('APP_CALLBACK'));
             $url = str_replace('{level}', $level, $url);

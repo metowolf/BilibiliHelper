@@ -22,7 +22,7 @@ class Login
     public static function run()
     {
         Log::info('正在装载终端');
-        if (empty(getenv('ACCESS_TOKEN'))) {
+        if (getenv('ACCESS_TOKEN') == "") {
             Log::info('令牌载入中...');
             self::login();
         }
@@ -99,12 +99,8 @@ class Login
         Log::info('令牌生成完毕!');
 
         $access_token = $data['data']['access_token'];
-        self::writeNewEnvironmentFileWith('ACCESS_TOKEN', $access_token);
-        Log::info(' > access token: '.$access_token);
-
         $refresh_token = $data['data']['refresh_token'];
-        self::writeNewEnvironmentFileWith('REFRESH_TOKEN', $refresh_token);
-        Log::info(' > refresh token: '.$refresh_token);
+        self::overload($access_token, $refresh_token);
 
         return true;
     }
@@ -160,14 +156,21 @@ class Login
         Log::info('令牌获取成功!');
 
         $access_token = $data['data']['token_info']['access_token'];
-        self::writeNewEnvironmentFileWith('ACCESS_TOKEN', $access_token);
-        Log::info(' > access token: '.$access_token);
-
         $refresh_token = $data['data']['token_info']['refresh_token'];
-        self::writeNewEnvironmentFileWith('REFRESH_TOKEN', $refresh_token);
-        Log::info(' > refresh token: '.$refresh_token);
+        self::overload($access_token, $refresh_token);
 
         return;
+    }
+
+    protected static function overload($access_token, $refresh_token)
+    {
+        self::writeNewEnvironmentFileWith('ACCESS_TOKEN', $access_token);
+        putenv('ACCESS_TOKEN='.$access_token);
+        Log::info(' > access token: '.$access_token);
+
+        self::writeNewEnvironmentFileWith('REFRESH_TOKEN', $refresh_token);
+        putenv('REFRESH_TOKEN='.$refresh_token);
+        Log::info(' > refresh token: '.$refresh_token);
     }
 
     protected static function writeNewEnvironmentFileWith($key, $value)

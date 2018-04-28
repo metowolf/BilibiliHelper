@@ -1,6 +1,5 @@
 {
     "name": "metowolf/bilibili",
-    "version": "0.7.0",
     "description": "B 站自动领瓜子、直播挂机脚本",
     "type": "project",
     "require": {
