@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -25,39 +25,40 @@ class Heart
             return;
         }
 
-        self::pc();
-        self::mobile();
+        $roomId = getenv('ROOM_ID');
+        self::pc($roomId);
+        self::mobile($roomId);
 
         self::$lock = time() + 300;
     }
 
-    protected static function pc()
+    public static function pc($roomId)
     {
         $payload = [
-            'room_id' => getenv('ROOM_ID'),
+            'room_id' => $roomId,
         ];
         $data = Curl::post('https://api.live.bilibili.com/User/userOnlineHeart', Sign::api($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('WEB 端的直播间心跳停止惹～', ['msg' => $data['message']]);
+            Log::warning('直播间 ' . $roomId . ' 心跳异常', ['msg' => $data['message']]);
         } else {
-            Log::info('WEB 心跳正常');
+            Log::info('向直播间 ' . $roomId . ' 发送心跳包');
         }
     }
 
-    protected static function mobile()
+    public static function mobile($roomId)
     {
         $payload = [
-            'room_id' => getenv('ROOM_ID'),
+            'room_id' => $roomId,
         ];
         $data = Curl::post('https://api.live.bilibili.com/mobile/userOnlineHeart', Sign::api($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('APP 端的直播间心跳停止惹～', ['msg' => $data['message']]);
+            Log::warning('直播间 ' . $roomId . ' 心跳异常（客户端）', ['msg' => $data['message']]);
         } else {
-            Log::info('APP 心跳正常');
+            Log::info('向直播间 ' . $roomId . ' 发送心跳包（客户端）');
         }
     }
 }

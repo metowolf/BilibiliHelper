@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -26,8 +26,6 @@ class Daily
         }
 
         self::dailyBag();
-
-        self::$lock = time() + 3600;
     }
 
     protected static function dailyBag()
@@ -38,8 +36,10 @@ class Daily
 
         if (isset($data['code']) && $data['code']) {
             Log::warning('每日礼包领取失败!', ['msg' => $data['message']]);
+            self::$lock = time() + 600;
         } else {
-            Log::info('每日礼包领取成功');
+            Log::notice('每日礼包领取成功');
+            self::$lock = strtotime(date('Y-m-d 23:59:59')) + 600;
         }
     }
 

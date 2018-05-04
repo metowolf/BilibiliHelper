@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.19
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -33,6 +33,9 @@ class Curl
         if (!is_null($payload)) {
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, is_array($payload) ? http_build_query($payload) : $payload);
+            Log::debug('POST: ' . $url);
+        } else {
+            Log::debug('GET: ' . $url);
         }
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_TIMEOUT, 20);

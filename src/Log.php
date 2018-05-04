@@ -85,9 +85,9 @@ class Log
 
     public static function callback($levelId, $level, $message)
     {
-        $callback_level = (getenv('APP_CALLBACK_LEVEL') === false) ? (Logger::ERROR) : intval(getenv('APP_CALLBACK_LEVEL'));
+        $callback_level = intval(getenv('CALLBACK_LEVEL'));
         if ($levelId >= $callback_level) {
-            $url = str_replace('{account}', self::prefix(), getenv('APP_CALLBACK'));
+            $url = str_replace('{account}', self::prefix(), getenv('CALLBACK_URL'));
             $url = str_replace('{level}', $level, $url);
             $url = str_replace('{message}', urlencode($message), $url);
             Curl::get($url);

@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -40,12 +40,12 @@ class Silver
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
-            Log::warning('领取宝箱失败！', $data['message']);
+            Log::warning('开启宝箱失败！', $data['message']);
             self::$lock = time() + 60;
             return;
         }
 
-        Log::info("好耶，领取成功，silver: {$data['data']['silver']}(+{$data['data']['awardSilver']})");
+        Log::notice("开启宝箱成功，瓜子 {$data['data']['silver']}(+{$data['data']['awardSilver']})");
 
         self::$task = 0;
         self::$lock = time() + 10;
@@ -59,19 +59,19 @@ class Silver
 
         if (isset($data['code']) && $data['code'] == -10017) {
             Log::notice($data['message']);
-            self::$lock = time() + 3600;
+            self::$lock = strtotime(date('Y-m-d 23:59:59')) + 600;
             return;
         }
 
         if (isset($data['code']) && $data['code']) {
-            Log::error('check freeSilverCurrentTask failed! Error message: '.$data['message']);
+            Log::error('领取宝箱任务失败！'.$data['message']);
             die();
         }
 
-        Log::info("获得一个宝箱，内含 {$data['data']['silver']} 个瓜子");
-        Log::info("等待 {$data['data']['minute']} 分钟");
+        Log::notice("领取宝箱成功，内含 {$data['data']['silver']} 个瓜子");
+        Log::info("等待 {$data['data']['minute']} 分钟后打开宝箱");
 
         self::$task = $data['data']['time_start'];
-        self::$lock = time() + $data['data']['minute'] * 60 + 5;
+        self::$lock = time() + $data['data']['minute'] * 60 + mt_rand(5, 30);
     }
 }

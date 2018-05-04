@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.8.0 (2018-05-04)
+
+**该版本为非兼容更新，从 0.7.x 升级需要重新覆盖配置文件**
+
+### Added
+- 新增小电视抽奖功能 ([#18](https://github.com/metowolf/BilibiliHelper/issues/18))
+- 新增配置项检测
+
+### Changed
+- 修改部分时间锁逻辑
+- 修改部分日志提示
+
 ## v0.7.3 (2018-04-28)
 
 ### Added

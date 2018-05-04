@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.25
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -25,6 +25,7 @@ class Login
         if (getenv('ACCESS_TOKEN') == "") {
             Log::info('令牌载入中...');
             self::login();
+            return false;
         }
         Log::info('正在检查令牌合法性...');
         if (!self::info()) {
@@ -34,8 +35,11 @@ class Login
                 Log::warning('无效令牌，正在重新申请...');
                 self::login();
             }
+            return false;
         }
         self::$lock = time() + 3600;
+
+        return true;
     }
 
     public static function check()
@@ -74,7 +78,7 @@ class Login
             return false;
         }
 
-        Log::info('令牌有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
+        Log::notice('令牌有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
 
         return $data['data']['expires_in'] > 86400;
     }
@@ -135,7 +139,7 @@ class Login
 
         // login
 
-        Log::info('正在获取令牌...');
+        Log::info('正在获取用户令牌...');
 
         $payload = [
             'subid' => 1,
@@ -153,7 +157,7 @@ class Login
             die();
         }
 
-        Log::info('令牌获取成功!');
+        Log::notice('用户令牌获取成功!');
 
         $access_token = $data['data']['token_info']['access_token'];
         $refresh_token = $data['data']['token_info']['refresh_token'];

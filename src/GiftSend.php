@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.21
+ * Version 18.05.04
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -33,7 +33,7 @@ class GiftSend
         if (isset($data['code']) && $data['code']) {
             Log::warning('获取帐号信息失败!', ['msg' => $data['message']]);
             Log::warning('清空礼物功能禁用!');
-            self::$lock = time() + 100000000;
+            self::$lock = strtotime('2099-12-31 00:00:00');
             return;
         }
 
@@ -108,7 +108,7 @@ class GiftSend
         if (isset($data['code']) && $data['code']) {
             Log::warning('送礼失败!', ['msg' => $data['message']]);
         } else {
-            Log::info("成功向 {$payload['biz_id']} 投喂了 {$value['gift_num']} 个{$value['gift_name']}");
+            Log::notice("成功向 {$payload['biz_id']} 投喂了 {$value['gift_num']} 个{$value['gift_name']}");
         }
     }
 }
