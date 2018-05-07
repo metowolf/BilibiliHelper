@@ -1,5 +1,23 @@
 # Release Notes
 
+## v0.9.0 (2018-05-07)
+
+**该版本为非兼容更新，从 0.8.x 升级需要重新覆盖配置文件**
+
+### Added
+- 项目重构，为多帐号准备
+- 弹幕监听采用 websocket 接口 (https://github.com/varspool/Wrench)
+- 更换 guzzle 库，支持 CookieJar (https://github.com/guzzle/guzzle)
+- 添加网络代理支持
+
+### Changed
+- 修改插件逻辑
+
+### Fixed
+- 修复配置文件检测问题
+- 修复 debug 信息递归黑洞问题
+
+
 ## v0.8.0 (2018-05-04)
 
 **该版本为非兼容更新，从 0.7.x 升级需要重新覆盖配置文件**

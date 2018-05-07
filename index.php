@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.05.04 (0.8.0)
+ * Version 0.9.0
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -11,29 +11,17 @@
 
 require 'vendor/autoload.php';
 
-use metowolf\Bilibili\Loader;
-use metowolf\Bilibili\Curl;
-use metowolf\Bilibili\Daily;
-use metowolf\Bilibili\GiftSend;
-use metowolf\Bilibili\Heart;
-use metowolf\Bilibili\Login;
-use metowolf\Bilibili\Silver;
-use metowolf\Bilibili\SmallTV;
-use metowolf\Bilibili\Task;
+$app = new BilibiliHelper\Lib\Helper();
 
-Loader::config();
-
-if (Login::run() === false) {
-    Loader::overload();
-}
-
+$config = $app->get('config')::parse('config');
 while (true) {
-    Login::check();
-    Daily::run();
-    GiftSend::run();
-    Heart::run();
-    Silver::run();
-    SmallTV::run();
-    Task::run();
+    $app->get('websocket')::run($config);
+    $app->get('auth')::run($config);
+    $app->get('heart')::run($config);
+    $app->get('dailyBag')::run($config);
+    $app->get('task')::run($config);
+    $app->get('giftSend')::run($config);
+    $app->get('silver')::run($config);
+    $app->get('smallTV')::run($config);
     sleep(10);
 }

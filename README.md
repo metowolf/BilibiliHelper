@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.8.0-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.9.0-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -14,18 +14,18 @@ B 站直播实用脚本
 
 |plugin   |version  |description   |
 |---------|---------|--------------|
-|Daily    |18.05.04 |每日背包奖励    |
-|GiftSend |18.05.04 |自动清空过期礼物 |
-|Heart    |18.05.04 |双端直播间心跳  |
-|Login    |18.05.04 |帐号登录组件    |
-|Silver   |18.05.04 |自动领宝箱     |
-|SmallTV  |18.05.04 |小电视抽奖     |
-|Task     |18.04.21 |每日任务       |
+|Auth     |18.05.07 |帐号登录组件    |
+|DailyBag |18.05.07 |每日礼包领取    |
+|Heart    |18.05.07 |双端直播间心跳  |
+|Silver   |18.05.07 |免费宝箱领取    |
+|SmallTV  |18.05.07 |小电视抽奖     |
+|Task     |18.05.07 |每日任务       |
 
 
 ## 未完成功能
 |待续|
 |-------|
+|扭蛋机|
 |总督检测|
 |节奏风暴|
 |应援团签到|

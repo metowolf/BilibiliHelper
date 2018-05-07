@@ -3,26 +3,23 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 18.04.28
  *
- * Copyright 2018, laverboy & metowolf
- * https://gist.github.com/laverboy/fd0a32e9e4e9fbbf9584
+ * Copyright 2018, metowolf
  * Released under the MIT license
  */
 
-namespace metowolf\Bilibili;
+namespace BilibiliHelper\Lib;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Bramus\Monolog\Formatter\ColoredLineFormatter;
-use metowolf\Bilibili\Curl;
 
 class Log
 {
-
+    protected static $config;
     protected static $instance;
 
-    static public function getLogger()
+    public static function getLogger()
     {
         if (!self::$instance) {
             self::configureInstance();
@@ -30,11 +27,18 @@ class Log
         return self::$instance;
     }
 
+    public static function config(&$config)
+    {
+        static::$config = $config;
+        return new self;
+    }
+
     protected static function configureInstance()
     {
+        $handler = new StreamHandler('php://stdout', static::$config['config']['APP_DEBUG'] ? Logger::DEBUG : Logger::INFO);
+        $handler->setFormatter(new ColoredLineFormatter(null, "[%datetime%] %channel%.%level_name%: %message%\n"));
+
         $logger = new Logger('Bilibili');
-        $handler = new StreamHandler('php://stdout', getenv('APP_DEBUG') == 'true' ? Logger::DEBUG : Logger::INFO);
-        $handler->setFormatter(new ColoredLineFormatter());
         $logger->pushHandler($handler);
 
         self::$instance = $logger;
@@ -42,8 +46,8 @@ class Log
 
     private static function prefix()
     {
-        if (getenv('APP_MULTIPLE') == 'true') {
-            return '[' . (empty($t = getenv('APP_USER_IDENTITY')) ? getenv('APP_USER') : $t) . ']';
+        if (static::$config['config']['APP_MULTIPLE']) {
+            return '[' . (empty($t = static::$config['config']['APP_USER_IDENTITY']) ? static::$config['config']['APP_USER'] : $t) . ']';
         }
         return '';
     }
@@ -52,7 +56,6 @@ class Log
     {
         $message = self::prefix() . $message;
         self::getLogger()->addDebug($message, $context);
-        self::callback(Logger::DEBUG, 'DEBUG', $message);
     }
 
     public static function info($message, array $context = [])
@@ -85,9 +88,9 @@ class Log
 
     public static function callback($levelId, $level, $message)
     {
-        $callback_level = intval(getenv('CALLBACK_LEVEL'));
+        $callback_level = intval(static::$config['config']['CALLBACK_LEVEL']);
         if ($levelId >= $callback_level) {
-            $url = str_replace('{account}', self::prefix(), getenv('CALLBACK_URL'));
+            $url = str_replace('{account}', self::prefix(), static::$config['config']['CALLBACK_URL']);
             $url = str_replace('{level}', $level, $url);
             $url = str_replace('{message}', urlencode($message), $url);
             Curl::get($url);
