@@ -33,7 +33,7 @@ class SmallTV extends Base
                 'status' => 0,
                 'lock' => time() + mt_rand(5, 30),
             ];
-            Log::notice("直播间 {$roomid} 加入队列");
+            Log::info("直播间 {$roomid} 加入队列");
         }
 
         foreach (static::data('smallTV') as $vo) {
@@ -58,12 +58,12 @@ class SmallTV extends Base
     protected static function check($value)
     {
         if (!in_array(intval(date('H')), static::config('SMALLTV_HOURS'))) {
-            Log::info('当前为休息时段，放弃小电视抽奖');
+            Log::notice('当前为休息时段，放弃小电视抽奖');
             return false;
         }
 
         if (mt_rand(0, 100) >= static::config('SMALLTV_RATE')) {
-            Log::info('根据抽奖比率设置 (' . static::config('SMALLTV_RATE') . '%)，放弃小电视抽奖');
+            Log::notice('根据抽奖比率设置 (' . static::config('SMALLTV_RATE') . '%)，放弃小电视抽奖');
             return false;
         }
 

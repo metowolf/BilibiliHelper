@@ -52,7 +52,8 @@ class Curl
                 'User-Agent'      => 'bili-universal/6680 CFNetwork/897.15 Darwin/17.5.0',
                 'Referer'         => 'https://live.bilibili.com/'.static::$config['config']['SOCKET_ROOM_ID'],
             ],
-            'timeout'  => 20.0,
+            'timeout'     => 20.0,
+            'http_errors' => false,
         ];
         if (!empty(static::$config['config']['NETWORK_PROXY'])) {
             $options['proxy'] = static::$config['config']['NETWORK_PROXY'];

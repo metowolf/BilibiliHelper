@@ -31,7 +31,7 @@ class Websocket extends Base
         if (!static::data('websocket')) {
             $client = new Client(
                 'wss://broadcastlv.chat.bilibili.com:2245/sub',
-                'https://broadcastlv.chat.bilibili.com:2245/sub'
+                'https://live.bilibili.com'
             );
             static::data('websocket', $client);
         }

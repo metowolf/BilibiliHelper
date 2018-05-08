@@ -108,7 +108,7 @@ class Auth extends Base
             Log::error('令牌验证失败');
             return false;
         }
-        Log::notice('令牌验证成功，有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
+        Log::info('令牌验证成功，有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
 
         return $data['data']['expires_in'] > 86400;
     }
