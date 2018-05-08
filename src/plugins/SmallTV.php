@@ -85,6 +85,17 @@ class SmallTV extends Base
             return false;
         }
 
+        $payload = [
+            'roomid' => $value['roomid'],
+        ];
+        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/check', $payload);
+        $data = json_decode($data, true);
+
+        if (!count($data['data']['list'])) {
+            Log::warning("直播间 {$value['roomid']} 小电视列表为空，放弃小电视抽奖");
+            return false;
+        }
+
         static::entryAction($value['roomid']);
 
         return true;
@@ -96,17 +107,19 @@ class SmallTV extends Base
         $payload = [
             'room_id' => $value,
         ];
-        Curl::post('https://api.live.bilibili.com/room/v1/Room/room_entry_action', static::sign($payload));
+        Curl::post('https://api.live.bilibili.com/room/v1/Room/room_entry_action', $payload);
+
         Heart::web($value);
     }
 
     protected static function join($value)
     {
         $payload = [
-            'roomid' => $value['roomid'],
             'raffleId' => $value['tvid'],
+            'roomid' => $value['roomid'],
+            'type' => 'Gift',
         ];
-        $data = Curl::post('https://api.live.bilibili.com/gift/v2/smalltv/join', static::sign($payload));
+        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/join', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
@@ -122,18 +135,19 @@ class SmallTV extends Base
     protected static function notice($value)
     {
         $payload = [
-            'roomid' => $value['roomid'],
+            'type' => 'small_tv',
             'raffleId' => $value['tvid'],
         ];
-        $data = Curl::get('https://api.live.bilibili.com/gift/v2/smalltv/notice', static::sign($payload));
+        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/notice', $payload);
         $data = json_decode($data, true);
 
-        if (isset($data['code']) && $data['code']) {
+        if (isset($data['msg']) && $data['msg'] != 'ok') {
             Log::error("小电视 #{$value['tvid']} 抽奖失败");
             static::unset($value);
         }
 
         if ($data['data']['status'] == 3) {
+            Log::info("小电视 #{$value['tvid']} 抽奖中");
             return;
         }
 
