@@ -38,7 +38,7 @@ class Auth extends Base
 
         static::checkCookie();
 
-        static::data('lock', time() + 3600);
+        static::data('lock', time() + 600);
     }
 
     protected static function loginPassword()

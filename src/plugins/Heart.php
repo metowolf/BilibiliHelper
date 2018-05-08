@@ -39,7 +39,8 @@ class Heart extends Base
 
     public static function web($roomId)
     {
-        $data = Curl::post('https://api.live.bilibili.com/User/userOnlineHeart');
+        $payload = [];
+        $data = Curl::post('https://api.live.bilibili.com/User/userOnlineHeart', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {

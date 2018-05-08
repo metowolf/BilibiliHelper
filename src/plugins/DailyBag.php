@@ -42,7 +42,7 @@ class DailyBag extends Base
     public static function web()
     {
         $payload = [];
-        $data = Curl::get('https://api.live.bilibili.com/gift/v2/live/receive_daily_bag', $payload);
+        $data = Curl::get('https://api.live.bilibili.com/gift/v2/live/receive_daily_bag', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {

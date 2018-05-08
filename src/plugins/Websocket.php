@@ -117,7 +117,7 @@ class Websocket extends Base
                 'roomid' => static::config('SOCKET_ROOM_ID'),
                 'protover' => 1,
                 'platform' => 'web',
-                'clientver' => '1.3.3',
+                'clientver' => '1.4.0',
             ]), 0x0007)
         );
     }

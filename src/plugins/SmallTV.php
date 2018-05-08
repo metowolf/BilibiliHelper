@@ -88,7 +88,7 @@ class SmallTV extends Base
         $payload = [
             'roomid' => $value['roomid'],
         ];
-        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/check', $payload);
+        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/check', static::sign($payload));
         $data = json_decode($data, true);
 
         if (!count($data['data']['list'])) {
@@ -107,7 +107,7 @@ class SmallTV extends Base
         $payload = [
             'room_id' => $value,
         ];
-        Curl::post('https://api.live.bilibili.com/room/v1/Room/room_entry_action', $payload);
+        Curl::post('https://api.live.bilibili.com/room/v1/Room/room_entry_action', static::sign($payload));
 
         Heart::web($value);
     }
@@ -138,7 +138,7 @@ class SmallTV extends Base
             'type' => 'small_tv',
             'raffleId' => $value['tvid'],
         ];
-        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/notice', $payload);
+        $data = Curl::get('https://api.live.bilibili.com/gift/v3/smalltv/notice', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['msg']) && $data['msg'] != 'ok') {
