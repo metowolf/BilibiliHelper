@@ -4,7 +4,8 @@
  * metowolf BilibiliHelper
  * https://i-meto.com/
  *
- * Copyright 2018, metowolf
+ * https://github.com/lkeme/BiliHelper/blob/dev/src/GroupSignIn.php
+ * Copyright 2018, Lkeme, metowolf
  * Released under the MIT license
  */
 
@@ -79,7 +80,7 @@ class Group extends Base
         if ($data['data']['status']) {
             Log::notice("应援团 {$value['group_name']} 已经签到过了");
         } else {
-            Log::notice("应援团 {$value['group_name']} 签到成功，增加 {$de_raw['data']['add_num']} 点亲密度");
+            Log::notice("应援团 {$value['group_name']} 签到成功，增加 {$data['data']['add_num']} 点亲密度");
         }
 
         return true;
