@@ -41,7 +41,7 @@ class SmallTV extends Base
                 if (static::check($vo)) {
                     static::join($vo);
                 } else {
-                    static::unset($vo);
+                    static::drop($vo);
                 }
             }
             if ($vo['status'] == 1 && $vo['lock'] <= time()) {
@@ -50,7 +50,7 @@ class SmallTV extends Base
         }
     }
 
-    protected static function unset($value)
+    protected static function drop($value)
     {
         unset(static::$config['data'][static::PLUGIN_NAME]['smallTV'][$value['tvid']]);
     }
@@ -124,7 +124,7 @@ class SmallTV extends Base
 
         if (isset($data['code']) && $data['code']) {
             Log::error("小电视 #{$value['tvid']} 抽奖加入失败");
-            static::unset($value);
+            static::drop($value);
             return;
         }
 
@@ -143,7 +143,7 @@ class SmallTV extends Base
 
         if (isset($data['msg']) && $data['msg'] != 'ok') {
             Log::error("小电视 #{$value['tvid']} 抽奖失败");
-            static::unset($value);
+            static::drop($value);
         }
 
         if ($data['data']['status'] == 3) {
@@ -152,7 +152,7 @@ class SmallTV extends Base
         }
 
         Log::notice("在直播间 {$value['roomid']} 获得 {$data['data']['gift_num']} 个{$data['data']['gift_name']}");
-        static::unset($value);
+        static::drop($value);
     }
 
 

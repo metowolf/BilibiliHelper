@@ -30,7 +30,7 @@ class Group extends Base
             return;
         }
 
-        $groups = static::list();
+        $groups = static::getList();
         $count = count($groups);
         foreach ($groups as $group) {
             $count -= static::signIn($group);
@@ -43,7 +43,7 @@ class Group extends Base
         }
     }
 
-    public static function list()
+    protected static function getList()
     {
         $payload = [];
         $data = Curl::post('https://api.vc.bilibili.com/link_group/v1/member/my_groups', static::sign($payload));
