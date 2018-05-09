@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 0.9.0
+ * Version 0.9.1
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -11,17 +11,29 @@
 
 require 'vendor/autoload.php';
 
-$app = new BilibiliHelper\Lib\Helper();
+$plugins = [
+    'websocket',
+    'auth',
+    'capsule',
+    'dailyBag',
+    'giftSend',
+    'group',
+    'heart',
+    'silver',
+    'smallTV',
+    'task',
+];
 
-$config = $app->get('config')::parse('config');
+$filename = isset($argv[1]) ? $argv[1] : 'config';
+
+$app = new BilibiliHelper\Lib\Helper();
+$t = $app->get('config');
+$config = $t::parse($filename);
+
 while (true) {
-    $app->get('websocket')::run($config);
-    $app->get('auth')::run($config);
-    $app->get('heart')::run($config);
-    $app->get('dailyBag')::run($config);
-    $app->get('task')::run($config);
-    $app->get('giftSend')::run($config);
-    $app->get('silver')::run($config);
-    $app->get('smallTV')::run($config);
+    foreach ($plugins as $plugin) {
+        $t = $app->get($plugin);
+        $t::run($config);
+    }
     sleep(10);
 }

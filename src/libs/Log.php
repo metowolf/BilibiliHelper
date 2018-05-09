@@ -88,6 +88,9 @@ class Log
 
     public static function callback($levelId, $level, $message)
     {
+        if (empty(static::$config['config']['CALLBACK_URL'])) {
+            return;
+        }
         $callback_level = intval(static::$config['config']['CALLBACK_LEVEL']);
         if ($levelId >= $callback_level) {
             $url = str_replace('{account}', self::prefix(), static::$config['config']['CALLBACK_URL']);

@@ -14,9 +14,9 @@ use BilibiliHelper\Lib\Log;
 use BilibiliHelper\Lib\Curl;
 use Wrench\Client;
 
-class Websocket extends Base
+class Danmaku extends Base
 {
-    const PLUGIN_NAME = 'websocket';
+    const PLUGIN_NAME = 'danmaku';
 
     protected static function init()
     {

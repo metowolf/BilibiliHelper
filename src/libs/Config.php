@@ -9,7 +9,7 @@
  * Released under the MIT license
  */
 
-namespace BilibiliHelper\Plugin;
+namespace BilibiliHelper\Lib;
 
 use Dotenv\Dotenv;
 

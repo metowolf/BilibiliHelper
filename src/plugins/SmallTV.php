@@ -26,7 +26,7 @@ class SmallTV extends Base
 
     protected static function work()
     {
-        foreach (static::$config['data']['websocket']['smalltv'] as $tvid => $roomid) {
+        foreach (static::$config['data']['danmaku']['smalltv'] as $tvid => $roomid) {
             static::$config['data'][static::PLUGIN_NAME]['smallTV'][$tvid] = [
                 'roomid' => $roomid,
                 'tvid' => $tvid,

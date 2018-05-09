@@ -40,11 +40,13 @@ class Base
     protected static function config($key, $value = null)
     {
         if (!is_null($value)) {
-            file_put_contents(static::$config['path'], preg_replace(
-                '/^'.$key.'=\S*/m',
-                $key.'='.$value,
-                file_get_contents(static::$config['path'])
-            ));
+            if (!empty(static::$config['path'])) {
+                file_put_contents(static::$config['path'], preg_replace(
+                    '/^'.$key.'=\S*/m',
+                    $key.'='.$value,
+                    file_get_contents(static::$config['path'])
+                ));
+            }
             static::$config['config'][$key] = $value;
         }
         return static::$config['config'][$key];
@@ -82,7 +84,6 @@ class Base
             'mobi_app' => 'iphone',
             'platform' => 'ios',
             'ts' => time(),
-            'type' => 'json',
         ];
         $payload = array_merge($payload, $default);
         if (isset($payload['sign'])) {
