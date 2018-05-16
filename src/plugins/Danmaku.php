@@ -30,8 +30,8 @@ class Danmaku extends Base
 
         if (!static::data('websocket')) {
             $client = new Client(
-                'wss://broadcastlv.chat.bilibili.com:2245/sub',
-                'https://live.bilibili.com'
+                'ws://broadcastlv.chat.bilibili.com:2244/sub',
+                'http://live.bilibili.com'
             );
             static::data('websocket', $client);
         }
@@ -117,7 +117,7 @@ class Danmaku extends Base
                 'roomid' => static::config('SOCKET_ROOM_ID'),
                 'protover' => 1,
                 'platform' => 'web',
-                'clientver' => '1.4.0',
+                'clientver' => '1.4.1',
             ]), 0x0007)
         );
     }

@@ -62,7 +62,7 @@ class SmallTV extends Base
             return false;
         }
 
-        if (mt_rand(0, 100) >= static::config('SMALLTV_RATE')) {
+        if (mt_rand(0, 100) > static::config('SMALLTV_RATE')) {
             Log::notice('根据抽奖比率设置 (' . static::config('SMALLTV_RATE') . '%)，放弃小电视抽奖');
             return false;
         }
