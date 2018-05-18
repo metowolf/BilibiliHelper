@@ -96,10 +96,11 @@ class Danmaku extends Base
     protected static function receive()
     {
         $responses = static::data('websocket')->receive();
-        if (is_array($responses)) {
+        if (is_array($responses) && !empty($responses)) {
             foreach ($responses as $response) {
                 static::split($response->getPayload());
             }
+            static::receive();
         }
     }
 
