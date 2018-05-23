@@ -64,7 +64,7 @@ class Danmaku extends Base
     protected static function parse($raw)
     {
         $data = json_decode($raw, true);
-        if ($data['cmd'] == 'SYS_MSG' && isset($data['tv_id'])) {
+        if ($data['cmd'] == 'SYS_MSG' && !empty($data['tv_id'])) {
             Log::debug($raw);
             Log::notice("直播间 {$data['real_roomid']} 开启了第 {$data['tv_id']} 轮小电视抽奖");
             static::$config['data'][static::PLUGIN_NAME]['smalltv'][$data['tv_id']] = $data['real_roomid'];
