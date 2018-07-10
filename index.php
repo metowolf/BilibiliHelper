@@ -12,7 +12,7 @@
 require 'vendor/autoload.php';
 
 $plugins = [
-    'websocket',
+    // 'websocket',
     'auth',
     'capsule',
     'dailyBag',
@@ -20,7 +20,7 @@ $plugins = [
     'group',
     'heart',
     'silver',
-    'smallTV',
+    // 'smallTV',
     'task',
 ];
 
