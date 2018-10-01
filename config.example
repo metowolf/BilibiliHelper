@@ -20,15 +20,6 @@ COOKIE_JAR=
 # 礼物赠送直播间
 ROOM_ID=3746256
 
-# 弹幕监控直播间
-SOCKET_ROOM_ID=23058
-
-# 小电视百分比
-SMALLTV_RATE=0
-
-# 小电视时间段
-SMALLTV_HOURS=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
-
 #######################
 #       网络设置       #
 #######################
@@ -54,7 +45,7 @@ APP_USER_IDENTITY=
 #   {level}   日志等级
 #   {message} 日志信息
 #
-CALLBACK_URL="http://www.example.com/api.send?text=[{level}]: {message}"
+CALLBACK_URL=""
 
 # 错误回调级别
 #

@@ -37,8 +37,7 @@ class Config
             $conf->required(['APP_USER', 'APP_PASS'])->notEmpty();
             $conf->required(['ACCESS_TOKEN', 'REFRESH_TOKEN', 'COOKIE_JAR']);
             // 功能设置
-            $conf->required(['ROOM_ID', 'SOCKET_ROOM_ID', 'SMALLTV_RATE'])->isInteger();
-            $conf->required(['SMALLTV_HOURS']);
+            $conf->required(['ROOM_ID'])->isInteger();
             // 网络设置
             $conf->required(['NETWORK_PROXY']);
             // 日志设置
@@ -65,9 +64,6 @@ class Config
                 'COOKIE_JAR' => empty(getenv('COOKIE_JAR')) ? '[]' : getenv('COOKIE_JAR'),
                 // 功能设置
                 'ROOM_ID' => intval(getenv('ROOM_ID')),
-                'SOCKET_ROOM_ID' => intval(getenv('SOCKET_ROOM_ID')),
-                'SMALLTV_RATE' => intval(getenv('SMALLTV_RATE')),
-                'SMALLTV_HOURS' => array_map('intval', explode(',', getenv('SMALLTV_HOURS'))),
                 // 网络设置
                 'NETWORK_PROXY' => getenv('NETWORK_PROXY'),
                 // 日志设置

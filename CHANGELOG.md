@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.9.2 (2018-09-30)
+
+### Removed
+- 移除小电视抽奖相关
+
+### Fixed
+- 修复 composer.lock 因 BootCDN 停止维护的影响
+
 ## v0.9.1 (2018-05-09)
 
 ### Added

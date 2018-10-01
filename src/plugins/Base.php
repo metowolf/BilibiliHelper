@@ -79,7 +79,7 @@ class Base
             'access_key' => static::$config['config']['ACCESS_TOKEN'],
             'actionKey' => 'appkey',
             'appkey' => $appkey,
-            'build' => '6680',
+            'build' => '8110',
             'device' => 'phone',
             'mobi_app' => 'iphone',
             'platform' => 'ios',

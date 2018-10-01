@@ -3,7 +3,7 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 0.9.1
+ * Version 0.9.2
  *
  * Copyright 2018, metowolf
  * Released under the MIT license
@@ -12,7 +12,6 @@
 require 'vendor/autoload.php';
 
 $plugins = [
-    // 'websocket',
     'auth',
     'capsule',
     'dailyBag',
@@ -20,7 +19,6 @@ $plugins = [
     'group',
     'heart',
     'silver',
-    // 'smallTV',
     'task',
 ];
 

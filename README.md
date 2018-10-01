@@ -20,7 +20,6 @@ B 站直播实用脚本
 |Group    |18.05.09 |应援团签到     |
 |Heart    |18.05.07 |双端直播间心跳  |
 |Silver   |18.05.07 |免费宝箱领取    |
-|SmallTV  |18.05.08 |小电视抽奖     |
 |Task     |18.05.07 |每日任务       |
 
 
@@ -37,11 +36,9 @@ B 站直播实用脚本
 |PHP (>=5.6 or >=7.0)|
 |php-openssl|
 |php-curl|
-|php-sockets|
 
 通常使用 `composer` 工具会自动检测上述依赖问题。  
 
-* 项目 `composer.lock` 基于镜像生成 https://pkg.phpcomposer.com/
 
 ## 使用指南
 
@@ -158,19 +155,14 @@ http://live.bilibili.com/3746256
 
 
 ## 小电视抽奖
-config 文件中开放了三个相关设置，这里作下说明
 
-|key|description|
-|---|---|
-|SOCKET_ROOM_ID|弹幕监控直播间，这里通常选择音乐台等 24 小时直播，并且弹幕较少的房间，例如 23058|
-|SMALLTV_RATE|小电视抽奖的比率，可以设置 0-100 的整数，作用是随机加入抽奖的概率|
-|SMALLTV_HOURS|小电视抽奖的时段，采用 24 小时制，通常设置为正常人看直播的时段，数字间用英文逗号隔开|
+由于利益关系，后续版本将移除小电视抽奖，只维护基本功能。
 
 
 
 ## 分支
- - 多帐号 https://github.com/NeverBehave/BilibiliHelper
- - lkeme https://github.com/lkeme/BiliHelper
+ - 多帐号版本 https://github.com/NeverBehave/BilibiliHelper
+ - 小电视抽奖版本 https://github.com/lkeme/BiliHelper
 
 
 ## License 许可证

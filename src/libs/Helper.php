@@ -13,12 +13,10 @@ namespace BilibiliHelper\Lib;
 use BilibiliHelper\Plugin\Auth;
 use BilibiliHelper\Plugin\Capsule;
 use BilibiliHelper\Plugin\DailyBag;
-use BilibiliHelper\Plugin\Danmaku;
 use BilibiliHelper\Plugin\GiftSend;
 use BilibiliHelper\Plugin\Group;
 use BilibiliHelper\Plugin\Heart;
 use BilibiliHelper\Plugin\Silver;
-use BilibiliHelper\Plugin\SmallTV;
 use BilibiliHelper\Plugin\Task;
 
 class Helper
@@ -41,9 +39,7 @@ class Helper
         $this->set('group', Group::getInstance());
         $this->set('heart', Heart::getInstance());
         $this->set('silver', Silver::getInstance());
-        $this->set('smallTV', SmallTV::getInstance());
         $this->set('task', Task::getInstance());
-        $this->set('websocket', Danmaku::getInstance());
     }
 
     public function get($name)

@@ -6,12 +6,10 @@
         "php": ">=5.6.0",
         "ext-curl": "*",
         "ext-openssl": "*",
-        "ext-sockets": "*",
-        "vlucas/phpdotenv": "^2.4",
+        "vlucas/phpdotenv": "^2.5",
         "monolog/monolog": "^1.23",
         "bramus/monolog-colored-line-formatter": "^2.0",
-        "guzzlehttp/guzzle": "^6.3",
-        "wrench/wrench": "~2.0"
+        "guzzlehttp/guzzle": "^6.3"
     },
     "license": "MIT",
     "authors": [
