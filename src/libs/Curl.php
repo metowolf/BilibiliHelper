@@ -49,7 +49,7 @@ class Curl
                 'Accept-Language' => 'zh-cn',
                 'Connection'      => 'keep-alive',
                 'Content-Type'    => 'application/x-www-form-urlencoded',
-                'User-Agent'      => 'bili-universal/8110 CFNetwork/974.2.1 Darwin/18.0.0',
+                'User-Agent'      => 'bili-universal/8230 CFNetwork/975.0.3 Darwin/18.2.0',
                 'Referer'         => 'https://live.bilibili.com/'.static::$config['config']['ROOM_ID'],
             ],
             'timeout'     => 20.0,

@@ -46,7 +46,7 @@ class Capsule extends Base
     public static function info()
     {
         $payload = [];
-        $data = Curl::post('https://api.live.bilibili.com/AppUser/capsuleInfo', static::sign($payload));
+        $data = Curl::post('https://api.live.bilibili.com/lottery/v1/Capsule/getDetail', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {

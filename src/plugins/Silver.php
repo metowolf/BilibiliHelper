@@ -62,7 +62,7 @@ class Silver extends Base
     protected static function getTask()
     {
         $payload = [];
-        $data = Curl::get('https://api.live.bilibili.com/mobile/freeSilverCurrentTask', static::sign($payload));
+        $data = Curl::get('https://api.live.bilibili.com/lottery/v1/SilverBox/getCurrentTask', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code'] == -10017) {

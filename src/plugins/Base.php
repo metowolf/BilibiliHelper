@@ -79,11 +79,12 @@ class Base
             'access_key' => static::$config['config']['ACCESS_TOKEN'],
             'actionKey' => 'appkey',
             'appkey' => $appkey,
-            'build' => '8110',
+            'build' => '8230',
             'device' => 'phone',
             'mobi_app' => 'iphone',
             'platform' => 'ios',
             'ts' => time(),
+            'type' => 'json',
         ];
         $payload = array_merge($payload, $default);
         if (isset($payload['sign'])) {

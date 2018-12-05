@@ -38,7 +38,7 @@ class Auth extends Base
 
         static::checkCookie();
 
-        static::data('lock', time() + 600);
+        static::data('lock', time() + 3600);
     }
 
     protected static function loginPassword()
@@ -101,7 +101,7 @@ class Auth extends Base
         $payload = [
             'access_token' => static::config('ACCESS_TOKEN'),
         ];
-        $data = Curl::get('https://passport.bilibili.com/api/oauth2/info', static::sign($payload));
+        $data = Curl::get('https://passport.bilibili.com/api/v2/oauth2/info', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
@@ -110,7 +110,7 @@ class Auth extends Base
         }
         Log::info('令牌验证成功，有效期: '.date('Y-m-d H:i:s', $data['ts']+$data['data']['expires_in']));
 
-        return $data['data']['expires_in'] > 86400;
+        return $data['data']['expires_in'] > 14400;
     }
 
     protected static function refresh()
@@ -149,13 +149,16 @@ class Auth extends Base
     protected static function getToken($username, $password)
     {
         $payload = [
+            'seccode' => '',
+            'validate' => '',
             'subid' => 1,
             'permission' => 'ALL',
             'username' => $username,
             'password' => $password,
             'captcha' => '',
+            'challenge' => '',
         ];
-        $data = Curl::post('https://passport.bilibili.com/api/v2/oauth2/login', static::sign($payload));
+        $data = Curl::post('https://passport.bilibili.com/api/v3/oauth2/login', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
