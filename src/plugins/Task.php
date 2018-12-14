@@ -34,6 +34,7 @@ class Task extends Base
         Log::info('检查每日任务');
         $data = static::check();
 
+        static::change_coin( $data );
         static::double_watch_info($data);
         static::sign_info($data);
 
@@ -121,5 +122,17 @@ class Task extends Base
             static::data('done', array_merge(static::data('done'), ['double_watch_info']));
         }
     }
+    protected static function change_coin( $value ) {
+		if ( in_array( 'change_coin', static::data( 'done' ) ) ) {
+			return;
+		}
+		Log::info( '检查任务「银瓜子换硬币」' );
+		$payload = [];
+		$data    = Curl::get( 'https://api.live.bilibili.com/pay/v1/Exchange/silver2coin', static::sign( $payload ) );
+		$data    = json_decode( $data, true );
+		Log::info( $data['msg'] );
+
+		return;
+	}
 
 }
