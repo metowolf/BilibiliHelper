@@ -174,3 +174,16 @@ http://live.bilibili.com/3746256
 本项目的所有代码文件、配置项，除另有说明外，均基于上述介绍的协议发布，具体请看分支下的 LICENSE。
 
 此处的文字仅用于说明，条款以 LICENSE 文件中的内容为准。
+
+## 在Docker中运行此程序
+```
+git clone https://github.com/kamino-space/BilibiliHelper.git
+cd BilibiliHelper
+docker build -t blive:v1 .
+docker run -d -e APP_USER=account -e APP_PASS=password --name blive --restart always blive:v1
+docker logs blive
+```
+环境变量:
+```
+config.example文件里，变量名相同
+```
