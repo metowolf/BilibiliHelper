@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.9.2-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.9.4-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -15,7 +15,7 @@ B 站直播实用脚本
 |plugin   |version  |description   |
 |---------|---------|--------------|
 |Auth     |18.05.07 |帐号登录组件    |
-|Capsule  |18.05.09 |扭蛋机(普通)    |
+|Capsule  |18.12.20 |扭蛋机(普通)    |
 |DailyBag |18.05.07 |每日礼包领取    |
 |Group    |18.05.09 |应援团签到     |
 |Heart    |18.05.07 |双端直播间心跳  |

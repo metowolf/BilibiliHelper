@@ -60,11 +60,16 @@ class Capsule extends Base
 
     public static function open($num)
     {
+        $csrf = Curl::getCsrf();
+
         $payload = [
+            'csrf' => $csrf,
+            'csrf_token' => $csrf,
             'count' => $num,
             'type' => 'normal',
+            'platform' => 'h5',
         ];
-        $data = Curl::get('https://api.live.bilibili.com/AppUser/capsuleInfoOpen', static::sign($payload));
+        $data = Curl::post('https://api.live.bilibili.com/xlive/web-ucenter/v1/capsule/open_capsule', $payload);
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
@@ -72,8 +77,8 @@ class Capsule extends Base
             return 0;
         }
 
-        if (isset($data['data']['text'])) {
-            foreach ($data['data']['text'] as $vo) {
+        if (isset($data['data']['awards'])) {
+            foreach ($data['data']['awards'] as $vo) {
                 Log::notice("扭蛋成功，获得 {$vo['num']} 个{$vo['name']}");
             }
         }
