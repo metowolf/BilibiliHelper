@@ -3,9 +3,9 @@
 /*!
  * metowolf BilibiliHelper
  * https://i-meto.com/
- * Version 0.9.4
+ * Version 0.9.5
  *
- * Copyright 2018, metowolf
+ * Copyright 2019, metowolf
  * Released under the MIT license
  */
 
