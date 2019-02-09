@@ -2,7 +2,7 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.9.2-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.9.5-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -15,7 +15,7 @@ B 站直播实用脚本
 |plugin   |version  |description   |
 |---------|---------|--------------|
 |Auth     |18.05.07 |帐号登录组件    |
-|Capsule  |18.05.09 |扭蛋机(普通)    |
+|Capsule  |19.01.09 |扭蛋机(普通)    |
 |DailyBag |18.05.07 |每日礼包领取    |
 |Group    |18.05.09 |应援团签到     |
 |Heart    |18.05.07 |双端直播间心跳  |
@@ -174,16 +174,3 @@ http://live.bilibili.com/3746256
 本项目的所有代码文件、配置项，除另有说明外，均基于上述介绍的协议发布，具体请看分支下的 LICENSE。
 
 此处的文字仅用于说明，条款以 LICENSE 文件中的内容为准。
-
-## 在Docker中运行此程序
-```
-git clone https://github.com/kamino-space/BilibiliHelper.git
-cd BilibiliHelper
-docker build -t blive:v1 .
-docker run -d -e APP_USER=account -e APP_PASS=password --name blive --restart always blive:v1
-docker logs blive
-```
-环境变量:
-```
-config.example文件里，变量名相同
-```

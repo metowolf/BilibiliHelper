@@ -1,17 +1,14 @@
-FROM php:7.2
-WORKDIR /root/blive
-ENV BLIVE_PATH /root/blive
-USER root
-COPY . .
-RUN \
-    chmod -R 777 /root/blive &&\
-    curl -sS https://getcomposer.org/installer | php &&\
-    mv composer.phar /usr/local/bin/composer &&\
-    echo "deb http://mirrors.163.com/debian stretch main\ndeb http://mirrors.163.com/debian-security stretch/updates main\ndeb http://mirrors.163.com/debian stretch-updates main" > /etc/apt/sources.list &&\
-    apt update &&\
-    apt install -y git zip &&\
-    composer config -g repo.packagist composer https://packagist.phpcomposer.com &&\
-    composer install &&\
-    apt clean &&\
-    composer clear-cache
-CMD ["/root/blive/start.sh"]
+FROM metowolf/php:7.3.0-alpine
+
+ENV USERNAME=
+ENV PASSWORD=
+ENV ROOMID 3362970
+
+COPY . /app
+WORKDIR /app
+
+RUN cp config.example config && \
+    composer config -g repo.packagist composer https://packagist.phpcomposer.com && \
+    composer install
+
+ENTRYPOINT ["sh", "docker/entrypoint.sh"]

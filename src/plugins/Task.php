@@ -122,6 +122,7 @@ class Task extends Base
             static::data('done', array_merge(static::data('done'), ['double_watch_info']));
         }
     }
+
     protected static function change_coin( $value ) {
 		if ( in_array( 'change_coin', static::data( 'done' ) ) ) {
 			return;
@@ -131,7 +132,6 @@ class Task extends Base
 		$data    = Curl::get( 'https://api.live.bilibili.com/pay/v1/Exchange/silver2coin', static::sign( $payload ) );
 		$data    = json_decode( $data, true );
 		Log::info( $data['msg'] );
-
 		return;
 	}
 

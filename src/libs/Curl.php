@@ -49,7 +49,7 @@ class Curl
                 'Accept-Language' => 'zh-cn',
                 'Connection'      => 'keep-alive',
                 'Content-Type'    => 'application/x-www-form-urlencoded',
-                'User-Agent'      => 'bili-universal/8230 CFNetwork/975.0.3 Darwin/18.2.0',
+                'User-Agent'      => 'bili-universal/8290 CFNetwork/976 Darwin/18.2.0',
                 'Referer'         => 'https://live.bilibili.com/'.static::$config['config']['ROOM_ID'],
             ],
             'timeout'     => 20.0,
@@ -98,6 +98,18 @@ class Curl
         $cookies = json_encode($cookies);
         Log::debug($cookies);
         return $cookies;
+    }
+
+    public static function getCsrf()
+    {
+        $cookies = self::getJar()->toArray();
+        foreach ($cookies as $cookie) {
+          if ($cookie['Name'] == 'bili_jct') {
+            Log::info('获取 CSRF：' . $cookie['Value']);
+            return $cookie['Value'];
+          }
+        }
+        return '';
     }
 
 }
