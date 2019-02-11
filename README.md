@@ -2,30 +2,31 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.9.5-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.10.0-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
 
 # BilibiliHelper
-B 站直播实用脚本
+B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowolf/BilibiliHelper/tree/0.9x)
 
 ## 功能组件
 
 |plugin   |version  |description   |
 |---------|---------|--------------|
-|Auth     |18.05.07 |帐号登录组件    |
-|Capsule  |19.01.09 |扭蛋机(普通)    |
-|DailyBag |18.05.07 |每日礼包领取    |
-|Group    |18.05.09 |应援团签到     |
-|Heart    |18.05.07 |双端直播间心跳  |
-|Silver   |18.05.07 |免费宝箱领取    |
-|Task     |18.05.07 |每日任务       |
+|Auth     |19.02.11 |帐号登录组件    |
+|Capsule  |开发中    |扭蛋机(普通)    |
+|DailyBag |19.02.11 |每日礼包领取    |
+|Group    |19.02.11 |应援团签到     |
+|Heart    |19.02.11 |双端直播间心跳  |
+|Silver   |19.02.11 |免费宝箱领取    |
+|Task     |19.02.11 |每日任务       |
 
 
 ## 未完成功能
 |待续|
 |-------|
+|小电视抽奖|
 |总督检测|
 |节奏风暴|
 
@@ -33,137 +34,14 @@ B 站直播实用脚本
 ## 环境依赖
 |Requirement|
 |-------|
-|PHP (>=5.6 or >=7.0)|
-|php-openssl|
-|php-curl|
-
-通常使用 `composer` 工具会自动检测上述依赖问题。  
+|Node.js (>=8.x)|
 
 
-## 使用指南
+## 搭建指南 (Docker)
+施工中
 
- 1. 下载（克隆）项目代码，初始化项目
-```
-$ git clone https://github.com/metowolf/BilibiliHelper.git
-$ cd BilibiliHelper
-$ cp config.example config
-```
- 2. 使用 composer 工具进行安装。**如果不了解 composer 工具的使用，可以直接到 https://github.com/metowolf/BilibiliHelper/releases 下载完整代码包，解压后跳到第三步。**
-```
-$ composer install
-```
- 3. 按照说明修改配置文件 `config`，只需填写帐号密码即可
- 4. 运行测试
-```
-$ php index.php
-```
-
-<p align="center"><img width="680px" src="https://i.loli.net/2018/04/21/5adb497dc3ece.png"></p>
-
-## 升级指南
-
- 1. 进入项目目录
-```
-$ cd BilibiliHelper
-```
- 2. 拉取最新代码
-```
-$ git pull
-```
-**大版本更新需要重新覆盖配置文件，并重新填写设置**
-```
-$ mv config config.old
-$ cp config.example config
-```
- 3. 更新依赖库
-```
-$ composer install
-```
- 4. 如果使用 systemd 等，需要重启服务
-```
-$ systemctl restart bilibili
-```
-
-## 部署指南
-如果你将 BilibiliHelper 部署到线上服务器时，则需要配置一个进程监控器来监测 `php index.php` 命令，在它意外退出时自动重启。
-
-通常可以使用以下的方式
- - systemd (推荐)
- - Supervisor
- - screen
- - nohup
-
-## systemd 脚本
-```
-# /usr/lib/systemd/system/bilibili.service
-
-[Unit]
-Description=Bilibili Helper Manager
-Documentation=https://github.com/metowolf/BilibiliHelper
-After=network.target
-
-[Service]
-ExecStart=/usr/bin/php /path/to/your/BilibiliHelper/index.php
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-## Supervisor 配置
-```
-[program:bilibili]
-process_name=%(program_name)s
-command=php /path/to/your/BilibiliHelper/index.php
-autostart=true
-autorestart=true
-redirect_stderr=true
-stdout_logfile=/tmp/bilibili.log
-```
-
-## 报错通知问题
-脚本出现 error 级别的报错，会调用通知地址进行提醒，这里推荐两个服务
-
-|服务|官网|
-|---|---|
-|Server酱|https://sc.ftqq.com/|
-|TelegramBot|https://core.telegram.org/bots/api|
-
-示范如下
-```
-# Server酱
-# 自行替换 <SCKEY>
-APP_CALLBACK="https://sc.ftqq.com/<SCKEY>.send?text={message}"
-
-# TelegramBot
-# 自行替换 <TOKEN> <CHAR_ID>
-APP_CALLBACK="https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHAR_ID>&text={message}"
-```
-
-`{message}` 部分会自动替换成错误信息，接口采用 get 方式发送
-
-
-## 直播间 ID 问题
-config 文件中有个 `ROOM_ID` 配置，填写此项可以清空临过期礼物给指定直播间。
-
-通常可以在直播间页面的 url 获取到它
-```
-http://live.bilibili.com/3746256
-```
-
-所有直播间号码小于 1000 的直播间为短号，该脚本在每次启动会自动修正，无需关心，
-
-
-## 小电视抽奖
-
-由于利益关系，后续版本将移除小电视抽奖，只维护基本功能。
-
-
-
-## 分支
- - 多帐号版本 https://github.com/NeverBehave/BilibiliHelper
- - 小电视抽奖版本 https://github.com/lkeme/BiliHelper
-
+## 搭建指南 (Node.js)
+施工中
 
 ## License 许可证
 
