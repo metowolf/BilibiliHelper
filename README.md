@@ -44,7 +44,7 @@ B 站直播实用脚本
 
  1. 下载（克隆）项目代码，初始化项目
 ```
-$ git clone https://github.com/metowolf/BilibiliHelper.git
+$ git clone https://github.com/metowolf/BilibiliHelper.git -b 0.9x
 $ cd BilibiliHelper
 $ cp config.example config
 ```
