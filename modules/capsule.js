@@ -1,8 +1,5 @@
-const moment = require('moment')
-
 const got = require('../utils/got')
 const share = require('../utils/share').capsule
-const sign = require('../utils/sign')
 const logger = require('../utils/logger')
 const sleep = require('../utils/sleep')
 
