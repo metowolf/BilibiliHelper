@@ -3,9 +3,7 @@ const share = require('../utils/share').giftsend
 const sign = require('../utils/sign')
 const logger = require('../utils/logger')
 const sleep = require('../utils/sleep')
-
-const Conf = require('conf')
-const config = new Conf()
+const config = require('../utils/config')
 
 const main = async () => {
   if (!share.ruid) await getRoomInfo()

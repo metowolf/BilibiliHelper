@@ -1,5 +1,6 @@
 const got = require('got')
 const chalk = require('chalk')
+const config = require('./config')
 const CookieStore = require('tough-cookie-file-store')
 const CookieJar = require('tough-cookie').CookieJar
 
@@ -12,18 +13,19 @@ const _got = got.extend({
     'Accept-Language': 'zh-cn',
     'Connection': 'keep-alive',
     'Content-Type': 'application/x-www-form-urlencoded',
-    'Referer': 'https://live.bilibili.com/3',
+    'Referer': `https://live.bilibili.com/${config.get('room_id')}`,
   },
   cookieJar,
+  timeout: 20000,
   hooks: {
     beforeRequest: [
       options => {
-        console.log(`${chalk.cyan(options.method)} ${chalk.yellow(options.href)}`)
+        if (config.get('debug')) console.log(`${chalk.cyan(options.method)} ${chalk.yellow(options.href)}`)
       }
     ],
     afterResponse: [
       response => {
-        if (response.body.length < 1000) console.log(chalk.gray(response.body))
+        if (config.get('debug') && response.body.length < 1000) console.log(chalk.gray(response.body))
         return response
       }
     ]

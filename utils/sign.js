@@ -1,7 +1,6 @@
 const qs = require('qs')
 const md5 = require('md5')
-const Conf = require('conf')
-const config = new Conf()
+const config = require('./config')
 
 const sign = data => {
 

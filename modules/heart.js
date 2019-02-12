@@ -2,9 +2,7 @@ const got = require('../utils/got')
 const share = require('../utils/share').heart
 const sign = require('../utils/sign')
 const logger = require('../utils/logger')
-
-const Conf = require('conf')
-const config = new Conf()
+const config = require('../utils/config')
 
 const main = async () => {
   await heart_web()
