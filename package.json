@@ -15,6 +15,7 @@
     "moment": "^2.24.0",
     "qs": "^6.6.0",
     "tough-cookie": "^3.0.1",
-    "tough-cookie-file-store": "^1.2.0"
+    "tough-cookie-file-store": "^1.2.0",
+    "ws": "^6.1.3"
   }
 }

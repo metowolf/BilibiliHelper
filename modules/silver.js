@@ -1,9 +1,8 @@
-const moment = require('moment')
-
 const got = require('../utils/got')
 const share = require('../utils/share').silver
 const sign = require('../utils/sign')
 const logger = require('../utils/logger')
+const tomorrow = require('../utils/tomorrow')
 
 const main = async () => {
   if (share.task === 0) await getSilver()
@@ -30,8 +29,7 @@ const getSilver = async () => {
     let {body} = await got.get('https://api.live.bilibili.com/lottery/v1/SilverBox/getCurrentTask', {query: sign({}), json: true})
     if (body.code === -10017) {
       logger.notice(body.message)
-      let unix = moment().add(1, 'd').startOf('day').add(10, 'm').format('x')
-      share.lock = parseInt(unix, 10)
+      share.lock = tomorrow(10)
       return
     }
     if (body.code) throw new Error('银瓜子宝箱领取失败')

@@ -29,5 +29,8 @@ module.exports = {
   },
   capsule: {
     lock: 0,
+  },
+  silver2coin: {
+    lock: 0,
   }
 }

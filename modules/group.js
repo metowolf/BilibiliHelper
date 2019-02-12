@@ -1,10 +1,9 @@
-const moment = require('moment')
-
 const got = require('../utils/got')
 const share = require('../utils/share').group
 const sign = require('../utils/sign')
 const logger = require('../utils/logger')
 const sleep = require('../utils/sleep')
+const tomorrow = require('../utils/tomorrow')
 
 const main = async () => {
   share.count = 0
@@ -13,10 +12,7 @@ const main = async () => {
     await signGroup(item)
     await sleep(1000)
   }
-  if (share.count === list.length) {
-    let unix = moment().add(1, 'd').startOf('day').add(10, 'm').format('x')
-    share.lock = parseInt(unix, 10)
-  }
+  if (share.count === list.length) share.lock = tomorrow(10)
   else share.lock = share.lock = Date.now() + 60 * 60 * 1000
 }
 

@@ -14,6 +14,7 @@ const module_group = require('./modules/group')
 const module_capsule = require('./modules/capsule')
 const module_giftsend = require('./modules/giftsend')
 const module_dailybag = require('./modules/dailybag')
+const module_silver2coin = require('./modules/silver2coin')
 
 const init = require('./utils/init')
 const sleep = require('./utils/sleep')
@@ -29,6 +30,7 @@ const app = async () => {
     await module_capsule()
     await module_giftsend()
     await module_dailybag()
+    await module_silver2coin()
     await sleep(1000)
   }
 }
