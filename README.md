@@ -15,7 +15,7 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 |plugin   |version  |description   |
 |---------|---------|--------------|
 |Auth     |19.02.11 |帐号登录组件    |
-|Capsule  |开发中    |扭蛋机(普通)    |
+|Capsule  |19.02.12 |扭蛋机(普通)    |
 |DailyBag |19.02.11 |每日礼包领取    |
 |Group    |19.02.11 |应援团签到     |
 |Heart    |19.02.11 |双端直播间心跳  |

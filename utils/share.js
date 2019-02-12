@@ -27,4 +27,7 @@ module.exports = {
     ruid: 0,
     roomid: 0,
   },
+  capsule: {
+    lock: 0,
+  }
 }
