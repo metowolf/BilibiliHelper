@@ -82,7 +82,7 @@ docker run -d --restart=unless-stopped -e USERNAME={用户名} -e PASSWORD={密�
 
 找到所有容器(第一列为容器ID)
 ```bash
-docker ps -a --filter "ancestor=metowolf/bilibilihelper
+docker ps -a --filter "ancestor=metowolf/bilibilihelper"
 ```
 
 查看容器日志
@@ -90,13 +90,24 @@ docker ps -a --filter "ancestor=metowolf/bilibilihelper
 docker logs {容器ID}
 ```
 
-停止服务
+停止容器
 ```bash
 docker stop {容器ID}
 ```
 
-```重启服务
+启动容器 (如果你之前暂时停止了容器，使用这个指令恢复容器：否则将会创建一个新的容器)
+```bash
+docker start {容器}
+```
+
+重启容器
+```bash
 docker restart {容器ID}
+```
+
+删除容器 (先停止容器)
+```
+docker rm {容器ID}
 ```
 
 ## 搭建指南 (Node.js)
