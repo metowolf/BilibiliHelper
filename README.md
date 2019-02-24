@@ -39,7 +39,65 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 
 
 ## 搭建指南 (Docker)
-施工中
+
+[Docker 安装脚本](https://get.docker.com)
+
+[Docker Image](https://hub.docker.com/r/metowolf/bilibilihelper)
+
+下方示范中各个功能的命令行参数可互相配合使用，更多信息请查阅[Docker 官方手册](https://docs.docker.com/engine/reference/commandline/docker/)
+
+**注意**：Docker日志默认不会定期删除，长期运行容器可能会导致日志文件较大。运行容器是请注意加入限制条件（下方基础使用`log-opt`部分）
+
+### 使用
+
+基础使用
+```bash
+docker run -d \ 
+           --restart=unless-stopped \
+           --log-driver json-file \
+           --log-opt max-size=10m \
+           --log-opt max-file=10 \
+           -e USERNAME={用户名} \
+           -e PASSWORD={密码} \
+           metowolf/bilibilihelper
+```
+
+指定赠送礼物的房间 (默认房间ID:3746256)
+```bash
+docker run -d --restart=unless-stopped -e USERNAME={用户名} -e PASSWORD={密码} -e ROOM_ID={房间ID} metowolf/bilibilihelper
+```
+
+更多参数指定请查看[Dockerfile](/Dockerfile)
+
+#### 多用户
+
+重复上述指令，替换对应变量即可
+
+建议开启多个用户实例的用户给对应容器命名，方便检查容器日志：
+```bash
+docker run -d --restart=unless-stopped -e USERNAME={用户名} -e PASSWORD={密码} --name={容器名字} metowolf/bilibilihelper
+```
+
+### 查找/管理(查看日志，停止服务，etc.)
+
+找到所有容器(第一列为容器ID)
+```bash
+docker ps -a --filter "ancestor=metowolf/bilibilihelper
+```
+
+查看容器日志
+```bash
+docker logs {容器ID}
+```
+
+停止服务
+```bash
+docker stop {容器ID}
+```
+
+```重启服务
+docker restart {容器ID}
+```
 
 ## 搭建指南 (Node.js)
 施工中
