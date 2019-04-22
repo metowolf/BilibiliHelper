@@ -11,7 +11,7 @@ const sign = data => {
     access_key: config.get('access_token', ''),
     actionKey: 'appkey',
     appkey,
-    build: '8330',
+    build: '8470',
     device: 'phone',
     mobi_app: 'iphone',
     platform: 'ios',

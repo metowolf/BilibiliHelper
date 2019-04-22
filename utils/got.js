@@ -8,7 +8,7 @@ const cookieJar = new CookieJar(new CookieStore('./.cookies'))
 
 const _got = got.extend({
   headers: {
-    'User-Agent': 'bili-universal/8330 CFNetwork/976 Darwin/18.2.0',
+    'User-Agent': 'bili-universal/8470 CFNetwork/978.0.7 Darwin/18.5.0',
     'Accept': '*/*',
     'Accept-Language': 'zh-cn',
     'Connection': 'keep-alive',

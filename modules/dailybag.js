@@ -16,7 +16,7 @@ const web = async () => {
 }
 
 const mobile = async () => {
-  let {body} = await got.get('https://api.live.bilibili.com/AppBag/sendDaily', {query: sign({}), json: true})
+  let {body} = await got.get('https://api.live.bilibili.com/xlive/app-room/v1/gift/daily_bag', {query: sign({}), json: true})
   if (body.code) throw new Error('每日礼包领取失败 (app)')
   share.lock_mobile = tomorrow(10)
 }
