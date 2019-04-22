@@ -21,7 +21,6 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 |Heart       |19.02.11 |双端直播间心跳  |
 |Silver      |19.02.11 |免费宝箱领取    |
 |Silver2Coin |19.02.12 |银瓜子兑换硬币  |
-|SmallTV     |开发中    |小电视抽奖     |
 |Task        |19.02.11 |每日任务       |
 
 
@@ -38,11 +37,9 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 |Node.js (>=8.x)|
 
 
-## 搭建指南 (Docker)
-施工中
+## 搭建指南
+![Docker 搭建指南](https://github.com/metowolf/BilibiliHelper/wiki/Docker-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
 
-## 搭建指南 (Node.js)
-施工中
 
 ## License 许可证
 
