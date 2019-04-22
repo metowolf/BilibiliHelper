@@ -2,12 +2,13 @@
 <p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.10.0-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.10.1-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
 
 # BilibiliHelper
+
 B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowolf/BilibiliHelper/tree/0.9x)
 
 ## 功能组件
@@ -16,7 +17,7 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 |------------|---------|--------------|
 |Auth        |19.02.11 |帐号登录组件    |
 |Capsule     |19.02.12 |扭蛋机(普通)    |
-|DailyBag    |19.02.11 |每日礼包领取    |
+|DailyBag    |19.04.22 |每日礼包领取    |
 |Group       |19.02.11 |应援团签到     |
 |Heart       |19.02.11 |双端直播间心跳  |
 |Silver      |19.02.11 |免费宝箱领取    |
@@ -25,6 +26,7 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 
 
 ## 未完成功能
+
 |待续|
 |-------|
 |总督检测|
@@ -32,13 +34,16 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 
 
 ## 环境依赖
+
 |Requirement|
 |-------|
 |Node.js (>=8.x)|
 
 
 ## 搭建指南
-![Docker 搭建指南](https://github.com/metowolf/BilibiliHelper/wiki/Docker-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
+
+ - [Docker 搭建指南](https://github.com/metowolf/BilibiliHelper/wiki/Docker-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)  
+ - [Node.js 搭建指南](https://github.com/metowolf/BilibiliHelper/wiki/Node.js-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
 
 
 ## License 许可证
