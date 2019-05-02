@@ -48,8 +48,8 @@ const main = async () => {
       const result = await getLottery(OriginRoomId, GuardId)
       if (result.code === 0) {
         const msg = result.data.message;
-        const addSum = (+msg.match(/\+(\d+)~/)[1]) || 0;
-        totalAddSum += addSum;
+        const addSum = msg.match(/\+(\d+)~/)[1] || 0;
+        totalAddSum += +addSum;
         logger.notice(`【${OriginRoomId}】 ${result.data.message}, 累计增加 ${totalAddSum} 点`)
       } else if (result.code === 400 && result.msg.includes('领取过')) {
         logger.info(`【${OriginRoomId}】 ${result.msg}`)
