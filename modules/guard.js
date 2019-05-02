@@ -6,6 +6,7 @@ const sleep = require('../utils/sleep')
 
 let csrfToken
 const has_list = []
+let totalAddSum = 0
 
 const getCsrf = () => {
   const cookies = got.defaults.options.cookieJar.getCookiesSync(
@@ -46,7 +47,10 @@ const main = async () => {
 
       const result = await getLottery(OriginRoomId, GuardId)
       if (result.code === 0) {
-        logger.notice(`【${OriginRoomId}】 ${result.data.message}`)
+        const msg = result.data.message;
+        const addSum = (+msg.match(/\+(\d+)~/)[1]) || 0;
+        totalAddSum += addSum;
+        logger.notice(`【${OriginRoomId}】 ${result.data.message}, 累计增加 ${totalAddSum} 点`)
       } else if (result.code === 400 && result.msg.includes('领取过')) {
         logger.info(`【${OriginRoomId}】 ${result.msg}`)
       } else if (result.code === 400 && result.msg.includes('被拒绝')) {
