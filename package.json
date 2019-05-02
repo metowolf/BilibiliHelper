@@ -6,6 +6,9 @@
   "repository": "https://github.com/metowolf/BilibiliHelper.git",
   "author": "metowolf <i@i-meto.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "chalk": "^2.4.2",
     "conf": "^4.0.1",

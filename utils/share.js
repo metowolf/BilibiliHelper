@@ -32,5 +32,9 @@ module.exports = {
   },
   silver2coin: {
     lock: 0,
+  },
+  guard: {
+    lock: 0,
+    lastGuardRoom: 0
   }
 }
