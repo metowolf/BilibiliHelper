@@ -88,20 +88,29 @@ const refreshToken = async () => {
 const checkCookie = async () => {
   logger.info('检查 Cookie 是否过期')
 
-  let payload = {
-    ts: Math.round(Date.now() / 1000)
-  }
-  let {body} = await got.get('https://api.live.bilibili.com/User/getUserInfo', {
-    query: payload,
-    json: true,
-  })
+  const body = await getUserInfo();
 
   if (body.code !== 'REPONSE_OK') {
     logger.warning('检测到 Cookie 已经过期')
     logger.info('正在刷新 Cookie')
     await got.get('https://passport.bilibili.com/api/login/sso', {query: sign({})})
     logger.notice('Cookie 刷新成功')
+    await getUserInfo(); // 获取UID，舰长经验检测有用到
   }
+}
+
+const getUserInfo = async () => {
+  const { body } = await got.get('https://api.live.bilibili.com/User/getUserInfo', {
+    query: {
+      ts: Math.round(Date.now() / 1000)
+    },
+    json: true,
+  })
+
+  // 获取UID
+  if (body.code === 'REPONSE_OK') config.set('uid', body.data.uid);
+
+  return body;
 }
 
 const checkToken = async () => {
