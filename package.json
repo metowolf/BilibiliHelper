@@ -1,6 +1,6 @@
 {
   "name": "@metowolf/bilibili",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "B 站自动领瓜子、直播挂机脚本",
   "main": "index.js",
   "repository": "https://github.com/metowolf/BilibiliHelper.git",
@@ -12,7 +12,7 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "conf": "^4.0.1",
-    "dotenv": "^7.0.0",
+    "dotenv": "^8.0.0",
     "got": "^9.6.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",

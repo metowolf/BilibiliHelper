@@ -1,8 +1,8 @@
 
-<p align="center"><img width="300px" src="https://i.loli.net/2018/04/20/5ad97bd395912.jpeg"></p>
+<p align="center"><a href="https://hub.docker.com/r/metowolf/bilibilihelper"><img width="300px" src="https://user-images.githubusercontent.com/2666735/57121590-30f97200-6dab-11e9-9a83-62098bea43d9.jpeg"></a></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.10.1-green.svg?longCache=true&style=for-the-badge">
+<img src="https://img.shields.io/badge/version-0.10.2-green.svg?longCache=true&style=for-the-badge">
 <img src="https://img.shields.io/badge/license-mit-blue.svg?longCache=true&style=for-the-badge">
 </p>
 
@@ -19,18 +19,11 @@ B 站挂机实用脚本，[>> 点此返回 PHP 旧版](https://github.com/metowo
 |Capsule     |19.02.12 |扭蛋机(普通)    |
 |DailyBag    |19.04.22 |每日礼包领取    |
 |Group       |19.02.11 |应援团签到     |
+|Guard       |19.05.03 |舰长亲密度领取  |
 |Heart       |19.02.11 |双端直播间心跳  |
 |Silver      |19.02.11 |免费宝箱领取    |
 |Silver2Coin |19.02.12 |银瓜子兑换硬币  |
 |Task        |19.02.11 |每日任务       |
-
-
-## 未完成功能
-
-|待续|
-|-------|
-|总督检测|
-|节奏风暴|
 
 
 ## 环境依赖
