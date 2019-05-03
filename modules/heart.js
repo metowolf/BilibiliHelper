@@ -31,6 +31,7 @@ const heart_mobile = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_HEART === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .then(() => {

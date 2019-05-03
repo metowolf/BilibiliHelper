@@ -22,6 +22,7 @@ const mobile = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_DAILYBAG === 'true') return
   return main()
     .catch(e => {
       logger.error(e.message)

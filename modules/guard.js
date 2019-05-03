@@ -1,73 +1,97 @@
 const got = require('../utils/got')
+const got_unsafe = require('got')
 const config = require('../utils/config')
 const logger = require('../utils/logger')
 const share = require('../utils/share').guard
 const sleep = require('../utils/sleep')
 
 let csrfToken
-const has_list = []
-let totalAddSum = 0
+let list_cache = []
 
 const getCsrf = () => {
-  const cookies = got.defaults.options.cookieJar.getCookiesSync(
-    'https://api.bilibili.com/'
-  )
+  const cookies = got.defaults.options.cookieJar.getCookiesSync('https://api.bilibili.com/')
   for (const cookie of cookies) {
     const found = `${cookie}`.match(/bili_jct=([0-9a-f]*)/i)
     if (found) return found[1]
   }
-  throw new Error('csrf 提取失败')
+  throw new Error('guard: csrf 提取失败')
 }
 
 const main = async () => {
-  if (csrfToken == null) csrfToken = getCsrf()
+
+  // 锁定流程，防止重复执行
+  share.lock = Date.now() + 24 * 60 * 60 * 1000
+
+  csrfToken = getCsrf()
+
   const uid = config.get('uid', '')
   if (uid === '') throw new Error('uid获取失败')
+
+  // 获取列表
   const list = await getGuardList(uid)
 
-  // has_list 大于 10000 的时候清理前 9000 条
-  if (has_list.length > 10000) has_list.splice(0, 9000);
-
-  const originList = list.filter(item => !has_list.includes(item.GuardId))
+  const originList = list.filter(item => !list_cache.includes(item.GuardId))
+  if (list_cache.length > 10000) list_cache.splice(0, 9000)
 
   for (const currentItem of originList) {
-    const { GuardId, OriginRoomId } = currentItem
+    const guardId = currentItem.GuardId
+    const originRoomid = currentItem.OriginRoomId
+
+    // 记录已经检查过的 GuardId
+    list_cache.push(guardId)
+
+    // 非特定时间跳过领取
+    const guardHours = config.get('guard.hours', [])
+    if (!guardHours.includes((new Date).getHours())) {
+      logger.debug('guard：非特定时间跳过领取')
+      continue
+    }
+
+    // 概率性跳过领取
+    const guardPercent = config.get('guard.percent', 100)
+    if (Math.random() * 100 >= guardPercent) {
+      logger.debug('guard：概率性跳过领取')
+      continue
+    }
+
     // 检测是否是真实存在的room
-    const isTrueRoom = await checkTrueRoom(OriginRoomId)
+    const isTrueRoom = await checkTrueRoom(originRoomid)
     if (isTrueRoom) {
+
       // 如果已经在这个房间就不用再进一遍
-      if (share.lastGuardRoom !== OriginRoomId) {
-        await goToRoom(OriginRoomId)
-        await sleep(1200 + Math.random() * 800);
-        share.lastGuardRoom = OriginRoomId
+      if (share.lastGuardRoom !== originRoomid) {
+        await goToRoom(originRoomid)
+        await sleep(2000 + Math.random() * 2000)
+        share.lastGuardRoom = originRoomid
       }
 
-      // 记录已经领过的 item
-      has_list.push(GuardId)
+      const result = await getLottery(originRoomid, guardId)
 
-      const result = await getLottery(OriginRoomId, GuardId)
       if (result.code === 0) {
-        const msg = result.data.message;
-        const addSum = msg.match(/\+(\d+)~/)[1] || 0;
-        totalAddSum += +addSum;
-        logger.notice(`【${OriginRoomId}】 ${result.data.message}, 累计增加 ${totalAddSum} 点`)
-      } else if (result.code === 400 && result.msg.includes('领取过')) {
-        logger.info(`【${OriginRoomId}】 ${result.msg}`)
-      } else if (result.code === 400 && result.msg.includes('被拒绝')) {
-        logger.warning(`【${OriginRoomId}】 ${result.data.message}`)
-      } else {
-        logger.error(`【${OriginRoomId}】 领取出错`)
+        logger.notice(`guard: ${originRoomid} 舰长经验领取成功，${result.msg}`)
+        continue
       }
-    } else logger.warning(`【${OriginRoomId}】 检测到钓鱼直播`)
-    await sleep(1800 + Math.random() * 1000);
+
+      if (result.code === 400 && result.msg.includes('领取过')) {
+        logger.notice(`guard: ${originRoomid} 舰长经验已经领取过`)
+        continue
+      }
+
+      if (result.code) {
+        throw new Error('guard: 舰长经验领取失败，稍后重试')
+      }
+    }
+
+    await sleep(5 * 1000 + Math.random() * 60 * 1000)
   }
 }
 
 async function getGuardList(uid) {
-  const { body } = await got.get('http://118.25.108.153:8080/guard', {
+  const { body } = await got_unsafe.get('http://118.25.108.153:8080/guard', {
     headers: {
       'User-Agent': `bilibili-live-tools/${uid}`
     },
+    timeout: 20000,
     json: true
   })
   return body
@@ -82,7 +106,7 @@ async function checkTrueRoom(roomId) {
     const { is_hidden, is_locked, encrypted } = body.data
     return !(is_hidden || is_locked || encrypted)
   } else {
-    logger.warning('获取房间信息失败')
+    logger.warning('guard: 获取房间信息失败')
     return false
   }
 }
@@ -120,6 +144,7 @@ async function getLottery(roomId, guardId) {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_GUARD === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .then(() => {
@@ -127,6 +152,6 @@ module.exports = () => {
     })
     .catch(e => {
       logger.error(e.message)
-      share.lock = Date.now() + 5 * 60 * 1000
+      share.lock = Date.now() + 60 * 60 * 1000
     })
 }

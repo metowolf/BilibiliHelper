@@ -36,6 +36,7 @@ const silver2coin = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_SILVER2CION === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .catch(e => {

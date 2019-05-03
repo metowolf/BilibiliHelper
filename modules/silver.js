@@ -43,6 +43,7 @@ const getSilver = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_SILVER === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .catch(e => {

@@ -43,6 +43,7 @@ const getList = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_GROUP === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .catch(e => {

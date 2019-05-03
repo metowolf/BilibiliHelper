@@ -54,6 +54,7 @@ const getCoin = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_CAPSULE === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .then(() => {

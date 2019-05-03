@@ -63,6 +63,7 @@ const getRoomInfo = async () => {
 }
 
 module.exports = () => {
+  if (process.env.DISABLE_GIFTSEND === 'true') return
   if (share.lock > Date.now()) return
   return main()
     .then(() => {
