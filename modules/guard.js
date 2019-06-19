@@ -82,7 +82,7 @@ const main = async () => {
       }
     }
 
-    await sleep(5 * 1000 + Math.random() * 60 * 1000)
+    await sleep(5 * 1000)
   }
 }
 
