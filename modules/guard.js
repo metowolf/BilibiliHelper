@@ -1,5 +1,6 @@
 const got = require('../utils/got')
 const got_unsafe = require('got')
+const chalk = require('chalk')
 const config = require('../utils/config')
 const logger = require('../utils/logger')
 const share = require('../utils/share').guard
@@ -28,9 +29,11 @@ const main = async () => {
   if (uid === '') throw new Error('uid获取失败')
 
   // 获取列表
-  const list = await getGuardList(uid)
+  const list = await getGuardLocal()
+  // const list = await getGuardList(uid)
+  
 
-  const originList = list.filter(item => !list_cache.includes(item.GuardId))
+  let originList = list.filter(item => !list_cache.includes(item.GuardId))
   if (list_cache.length > 10000) list_cache.splice(0, 9000)
 
   for (const currentItem of originList) {
@@ -68,12 +71,17 @@ const main = async () => {
       const result = await getLottery(originRoomid, guardId)
 
       if (result.code === 0) {
-        logger.notice(`guard: ${originRoomid} 舰长经验领取成功，${result.msg}`)
+        logger.notice(`guard: ${originRoomid} 舰长经验领取成功，${result.data.message}`)
         continue
       }
 
       if (result.code === 400 && result.msg.includes('领取过')) {
         logger.notice(`guard: ${originRoomid} 舰长经验已经领取过`)
+        continue
+      }
+
+      if (result.code === 400 && result.msg.includes('早点')) {
+        logger.notice(`guard: ${originRoomid} 舰长经验已过期`)
         continue
       }
 
@@ -86,13 +94,121 @@ const main = async () => {
   }
 }
 
+async function getLiveList(page) {
+  // 获取房间列表，每页30个房间
+  try {
+    const response = await got_unsafe.get('https://api.live.bilibili.com/room/v3/Area/getRoomList', {
+      headers: {
+        'User-Agent': `Mozilla/5.0 BiliDroid/5.45.2 (bbcallen@gmail.com) os/android model/google Pixel 2 mobi_app/android build/5452100 channel/yingyongbao innerVer/5452100 osVer/5.1.1 network/2`
+      },
+      body: {
+        "page": page,
+        "page_size": 30
+      },
+      json: true
+    });
+    return response.body;
+  } catch (error) {
+    console.log(error.response.body);
+    return false;
+  }
+}
+
+async function checkLottery(rid) {
+  // 检查礼物
+  try {
+    const response = await got_unsafe.get('https://api.live.bilibili.com/xlive/lottery-interface/v1/lottery/getLotteryInfo?roomid=' + rid, {
+      headers: {
+        'User-Agent': `Mozilla/5.0 BiliDroid/5.45.2 (bbcallen@gmail.com) os/android model/google Pixel 2 mobi_app/android build/5452100 channel/yingyongbao innerVer/5452100 osVer/5.1.1 network/2`
+      },
+      json: true
+    });
+    return response.body;
+  } catch (error) {
+    console.log(error.response.body);
+    return false;
+  }
+}
+
+async function getGuardLocal() {
+  // 本地获取舰长列表，不清楚是否会触发bili的安全风险，例如封锁ip，但是所有的内容可以匿名获取，应该不会影响到账号
+  // 会大量占用网络资源，但是会比原始方法可能来的更加快速及准确，漏领几率低
+  logger.notice(`guard: 使用本地方法拉取舰长列表中`)
+
+  // 初始化计数
+  let count = 998;
+
+  // 初始化返回值
+  let retarr = [];
+
+  // 循环拉取房间信息
+  for (let i = 0; i < count; i++) {
+
+    // 拉取第i页
+    const h = await getLiveList(i);
+
+    // 当拉取成功
+    if (h && h.code === 0) {
+
+      // 用当前在线直播数量确定总页数
+      count = (h.data.count / 30) + 1;
+
+      const backList = h.data.list;
+      backList.forEach(async (every) => {
+
+        // web_pendent有内容时，房间内有活动状态，大概率有舰长
+        if (every.web_pendent) {
+
+          // 获取房间的礼物信息
+          const g = await checkLottery(every.roomid);
+
+          // 拉取成功
+          if (g && g.code === 0) {
+
+            // 检查舰长信息
+            const lg = g.data.guard;
+            lg.forEach(elg => {
+
+              // 将舰长信息推入返回值
+              let tmp = { "GuardId": elg.id, "OriginRoomId": every.roomid };
+              retarr.push(tmp);
+            })
+          }
+          else {
+            if (config.get('debug') && g) console.log(g.msg);
+          }
+        }
+      });
+    } else {
+      if (config.get('debug') && h) console.log(h.msg);
+    }
+    await sleep(20);
+  }
+  if (config.get('debug')) console.log(chalk.gray(retarr))
+  logger.notice(`guard: 拉取完成`)
+  return retarr;
+}
+
 async function getGuardList(uid) {
-  const { body } = await got_unsafe.get('http://118.25.108.153:8080/guard', {
+  let { body } = await got_unsafe.get('http://118.25.108.153:8080/guard', {
     headers: {
       'User-Agent': `bilibili-live-tools/${uid}`
     },
-    timeout: 20000,
-    json: true
+    timeout: 60000,
+    json: true,
+    hooks: {
+      beforeRequest: [
+        options => {
+          if (config.get('debug')) console.log(`${chalk.cyan('GET')} ${chalk.yellow('http://118.25.108.153:8080/guard')}`)
+        }
+      ],
+      afterResponse: [
+        response => {
+          if (config.get('debug')) console.log(chalk.gray(response.body))
+          return response
+        }
+      ]
+    }
   })
   return body
 }
@@ -152,6 +268,7 @@ module.exports = () => {
     })
     .catch(e => {
       logger.error(e.message)
-      share.lock = Date.now() + 60 * 60 * 1000
+      share.lock = Date.now() + 5 * 60 * 1000
+      // share.lock = Date.now() + 60 * 60 * 1000
     })
 }
