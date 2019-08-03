@@ -32,8 +32,7 @@ const main = async () => {
   const list = await getGuardLocal()
   // const list = await getGuardList(uid)
   
-
-  let originList = list.filter(item => !list_cache.includes(item.GuardId))
+  const originList = list.filter(item => !list_cache.includes(item.GuardId))
   if (list_cache.length > 10000) list_cache.splice(0, 9000)
 
   for (const currentItem of originList) {
