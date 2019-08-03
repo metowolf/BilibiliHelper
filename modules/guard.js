@@ -31,7 +31,7 @@ const main = async () => {
   // 获取列表
   const list = await getGuardLocal()
   // const list = await getGuardList(uid)
-  
+
   const originList = list.filter(item => !list_cache.includes(item.GuardId))
   if (list_cache.length > 10000) list_cache.splice(0, 9000)
 
@@ -134,58 +134,64 @@ async function getGuardLocal() {
   // 会大量占用网络资源，但是会比原始方法可能来的更加快速及准确，漏领几率低
   logger.notice(`guard: 使用本地方法拉取舰长列表中`)
 
-  // 初始化计数
-  let count = 998;
+  // 初始化计数，临时抓取一份列表读取总数
+  const tmpBody = await getLiveList(0);
+  let count = (tmpBody && tmpBody.code === 0) ? (tmpBody.data.count / 30) + 1 : -1;
+  if (count === -1) return false;
+
+  // 初始化异步数组，for数组用于forEach异步，flag用于异步完成的标记
+  let forArr = [];
+  let flagArr = [];
+  for (let i = 0; i < count; ++i)forArr[i] = i;
 
   // 初始化返回值
-  let retarr = [];
+  let retArr = [];
 
-  // 循环拉取房间信息
-  for (let i = 0; i < count; i++) {
-
-    // 拉取第i页
-    const h = await getLiveList(i);
+  // 循环拉取信息，利用异步函数快速抓取
+  forArr.forEach(async (i) => {
+    const asyncBody = await getLiveList(i);
 
     // 当拉取成功
-    if (h && h.code === 0) {
+    if (asyncBody && asyncBody.code === 0) {
 
-      // 用当前在线直播数量确定总页数
-      count = (h.data.count / 30) + 1;
-
-      const backList = h.data.list;
-      backList.forEach(async (every) => {
+      const backList = asyncBody.data.list;
+      backList.forEach(async (eachRoom) => {
 
         // web_pendent有内容时，房间内有活动状态，大概率有舰长
-        if (every.web_pendent) {
+        if (eachRoom.web_pendent) {
 
           // 获取房间的礼物信息
-          const g = await checkLottery(every.roomid);
+          const lotteryBody = await checkLottery(eachRoom.roomid);
 
           // 拉取成功
-          if (g && g.code === 0) {
+          if (lotteryBody && lotteryBody.code === 0) {
 
             // 检查舰长信息
-            const lg = g.data.guard;
-            lg.forEach(elg => {
-
+            const guardInfo = lotteryBody.data.guard;
+            guardInfo.forEach(eachGuard => {
               // 将舰长信息推入返回值
-              let tmp = { "GuardId": elg.id, "OriginRoomId": every.roomid };
-              retarr.push(tmp);
+              let tmp = { "GuardId": eachGuard.id, "OriginRoomId": eachRoom.roomid };
+              retArr.push(tmp);
             })
           }
           else {
-            if (config.get('debug') && g) console.log(g.msg);
+            if (config.get('debug') && lotteryBody) console.log(lotteryBody.msg);
           }
         }
       });
     } else {
-      if (config.get('debug') && h) console.log(h.msg);
+      if (config.get('debug') && asyncBody) console.log(asyncBody.msg);
     }
-    await sleep(20);
+    flagArr.push(1);
+  });
+
+  while (flagArr.length != forArr.length) {
+    await sleep(500);
   }
-  if (config.get('debug')) console.log(chalk.gray(JSON.stringify(retarr)))
+
+  if (config.get('debug')) console.log(chalk.gray(JSON.stringify(retArr)))
   logger.notice(`guard: 拉取完成`)
-  return retarr;
+  return retArr;
 }
 
 async function getGuardList(uid) {
