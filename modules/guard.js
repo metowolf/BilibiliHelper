@@ -149,16 +149,16 @@ async function getGuardLocal() {
 
   // 循环拉取信息，利用异步函数快速抓取
   forArr.forEach(async (i) => {
-    const asyncBody = await getLiveList(i);
+    const listBody = await getLiveList(i);
 
     // 当拉取成功
-    if (asyncBody && asyncBody.code === 0) {
+    if (listBody && listBody.code === 0) {
 
       // 声明异步子状态
       let flagAsync = 0;
 
       // 获取该页房间列表
-      const backList = asyncBody.data.list;
+      const backList = listBody.data.list;
       backList.forEach(async (eachRoom) => {
 
         // web_pendent有内容时，房间内有活动状态，大概率有舰长
@@ -200,7 +200,7 @@ async function getGuardLocal() {
         await sleep(100);
       }
     } else {
-      if (config.get('debug') && asyncBody) console.log(asyncBody.msg);
+      if (config.get('debug') && listBody) console.log(listBody.msg);
     }
 
     // 增加一次flag，表示该次异步已完成
