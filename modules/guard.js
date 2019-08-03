@@ -183,7 +183,7 @@ async function getGuardLocal() {
     }
     await sleep(20);
   }
-  if (config.get('debug')) console.log(chalk.gray(retarr))
+  if (config.get('debug')) console.log(chalk.gray(JSON.stringify(retarr)))
   logger.notice(`guard: 拉取完成`)
   return retarr;
 }
