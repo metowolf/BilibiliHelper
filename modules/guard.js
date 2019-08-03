@@ -141,7 +141,7 @@ async function getGuardLocal() {
 
   // 初始化异步数组，for数组用于forEach异步，flag用于异步完成的标记
   let forArr = [];
-  let flagArr = [];
+  let flagMain = 0;
   for (let i = 0; i < count; ++i)forArr[i] = i;
 
   // 初始化返回值
@@ -154,6 +154,10 @@ async function getGuardLocal() {
     // 当拉取成功
     if (asyncBody && asyncBody.code === 0) {
 
+      // 声明异步子状态
+      let flagAsync = 0;
+
+      // 获取该页房间列表
       const backList = asyncBody.data.list;
       backList.forEach(async (eachRoom) => {
 
@@ -166,26 +170,45 @@ async function getGuardLocal() {
           // 拉取成功
           if (lotteryBody && lotteryBody.code === 0) {
 
+            // 声明异步子状态
+            let flagLottery = 0;
+
             // 检查舰长信息
             const guardInfo = lotteryBody.data.guard;
             guardInfo.forEach(eachGuard => {
               // 将舰长信息推入返回值
               let tmp = { "GuardId": eachGuard.id, "OriginRoomId": eachRoom.roomid };
               retArr.push(tmp);
+              ++flagLottery;
             })
+
+            // 等待异步完成
+            while (flagLottery != guardInfo.length) {
+              await sleep(100);
+            }
           }
           else {
             if (config.get('debug') && lotteryBody) console.log(lotteryBody.msg);
           }
         }
+
+        ++flagAsync;
       });
+
+      // 等待异步完成
+      while (flagAsync != backList.length) {
+        await sleep(100);
+      }
     } else {
       if (config.get('debug') && asyncBody) console.log(asyncBody.msg);
     }
-    flagArr.push(1);
+
+    // 增加一次flag，表示该次异步已完成
+    ++flagMain;
   });
 
-  while (flagArr.length != forArr.length) {
+  // 等待异步完成
+  while (flagMain != forArr.length) {
     await sleep(500);
   }
 
