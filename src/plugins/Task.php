@@ -74,7 +74,8 @@ class Task extends Base
         }
 
         $payload = [];
-        $data = Curl::get('https://api.live.bilibili.com/appUser/getSignInfo', static::sign($payload));
+        //$data = Curl::get('https://api.live.bilibili.com/appUser/getSignInfo', static::sign($payload));
+        $data = Curl::get('https://api.live.bilibili.com/sign/doSign', static::sign($payload));
         $data = json_decode($data, true);
 
         if (isset($data['code']) && $data['code']) {
