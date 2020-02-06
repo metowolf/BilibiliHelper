@@ -4,8 +4,8 @@ const config = require('./config')
 
 const sign = data => {
 
-  const appkey = '27eb53fc9058f8c3'
-  const appsecret = 'c2ed53a74eeefe3cf99fbd01d8c9c375'
+  const appkey = '4409e2ce8ffd12b8'
+  const appsecret = '59b43e04ad6965f34319062b478f83dd'
 
   let defaults = {
     access_key: config.get('access_token', ''),
