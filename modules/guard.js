@@ -30,12 +30,12 @@ const main = async () => {
   // 获取列表
   const list = await getGuardList(uid)
 
-  const originList = list.filter(item => !list_cache.includes(item.GuardId))
+  const originList = list.filter(item => !list_cache.includes(item.Id))
   if (list_cache.length > 10000) list_cache.splice(0, 9000)
 
   for (const currentItem of originList) {
-    const guardId = currentItem.GuardId
-    const originRoomid = currentItem.OriginRoomId
+    const guardId = currentItem.Id
+    const originRoomid = currentItem.RoomId
 
     // 记录已经检查过的 GuardId
     list_cache.push(guardId)
@@ -74,6 +74,11 @@ const main = async () => {
 
       if (result.code === 400 && result.msg.includes('领取过')) {
         logger.notice(`guard: ${originRoomid} 舰长经验已经领取过`)
+        continue
+      }
+
+      if (result.code === 400 && result.msg.includes('过期')) {
+        logger.notice(`guard: ${originRoomid} 舰长经验已经过期`)
         continue
       }
 
@@ -117,7 +122,9 @@ async function goToRoom(roomId) {
     {
       body: {
         room_id: roomId,
-        csrf_token: csrfToken
+        csrf_token: csrfToken,
+        csrf: csrfToken,
+        platform: 'pc',
       },
       form: true,
       json: true
@@ -128,13 +135,14 @@ async function goToRoom(roomId) {
 
 async function getLottery(roomId, guardId) {
   const { body } = await got.post(
-    'https://api.live.bilibili.com/lottery/v2/lottery/join',
+    'https://api.live.bilibili.com/xlive/lottery-interface/v3/guard/join',
     {
       body: {
         roomid: roomId,
         id: guardId,
         type: 'guard',
-        csrf_token: csrfToken
+        csrf_token: csrfToken,
+        csrf: csrfToken,
       },
       form: true,
       json: true
