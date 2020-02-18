@@ -11,7 +11,7 @@ const main = async () => {
 
 const heart_web = async () => {
   {
-    let {body} = await got.get('https://api.live.bilibili.com/User/userOnlineHeart', {json: true})
+    let {body} = await got.get('https://api.live.bilibili.com/relation/v1/Feed/heartBeat', {json: true})
     if (body.code) throw new Error('直播间心跳异常 (web)')
   }
 }
