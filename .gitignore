@@ -2,3 +2,5 @@ node_modules
 .cookies
 .config
 .env
+.package-lock.json
+log
