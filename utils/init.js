@@ -6,7 +6,7 @@ const init = () => {
     let t = {
       version: package.version,
       debug: process.env.DEBUG === 'true',
-      username: process.env.BILI_USERNAME || '',
+      username: process.env.BILI_USERNAME || process.env.USERNAME || '',
       password: process.env.PASSWORD || '',
       access_token: process.env.ACCESS_TOKEN || '',
       refresh_token: process.env.REFRESH_TOKEN || '',
