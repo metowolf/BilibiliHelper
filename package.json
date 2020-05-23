@@ -1,23 +1,27 @@
 {
-  "name": "@metowolf/bilibili",
-  "version": "0.10.2",
-  "description": "B 站自动领瓜子、直播挂机脚本",
-  "main": "index.js",
-  "repository": "https://github.com/metowolf/BilibiliHelper.git",
-  "author": "metowolf <i@i-meto.com>",
-  "license": "MIT",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "chalk": "^2.4.2",
-    "conf": "^4.0.1",
-    "dotenv": "^8.0.0",
-    "got": "^9.6.0",
-    "md5": "^2.2.1",
-    "moment": "^2.24.0",
-    "qs": "^6.7.0",
-    "tough-cookie": "^3.0.1",
-    "tough-cookie-file-store": "^1.2.0"
-  }
+    "name": "@metowolf/bilibili",
+    "version": "0.10.2",
+    "description": "B 站自动领瓜子、直播挂机脚本",
+    "main": "index.js",
+    "repository": "https://github.com/metowolf/BilibiliHelper.git",
+    "author": "metowolf <i@i-meto.com>",
+    "license": "MIT",
+    "scripts": {
+        "start": "node index.js",
+        "go": "pm2 start"
+    },
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "conf": "^4.0.1",
+        "dotenv": "^8.0.0",
+        "got": "^9.6.0",
+        "md5": "^2.2.1",
+        "moment": "^2.24.0",
+        "qs": "^6.7.0",
+        "tough-cookie": "^3.0.1",
+        "tough-cookie-file-store": "^1.2.0"
+    },
+    "devDependencies": {
+        "pm2": "^4.2.3"
+    }
 }
