@@ -3,6 +3,7 @@ const share = require('../utils/share').heart
 const sign = require('../utils/sign')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
+let lastInterval = 0
 
 const main = async () => {
   await heart_web()
@@ -11,8 +12,10 @@ const main = async () => {
 
 const heart_web = async () => {
   {
-    let {body} = await got.get('https://api.live.bilibili.com/relation/v1/Feed/heartBeat', {json: true})
+    let baseStr = Buffer.from(`${lastInterval}|${config.get('room_id')}|1|0`).toString('base64')
+    let {body} = await got.get('https://live-trace.bilibili.com/xlive/rdata-interface/v1/heartbeat/webHeartBeat?pf=web&hb=' + baseStr, {json: true})
     if (body.code) throw new Error('直播间心跳异常 (web)')
+    lastInterval = body.data.next_interval
   }
 }
 
