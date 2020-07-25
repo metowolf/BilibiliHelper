@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.10.4 (2020-07-25)
+
+### Changed
+- 更新 Docker 基础镜像
+
 ## v0.10.3 (2020-05-24)
 
 ### Changed
