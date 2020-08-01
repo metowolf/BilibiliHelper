@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+require('log-timestamp');
 
 module.exports = {
   debug: message => console.log(`${chalk.bgCyan('DEBUG')} ${message}`),
