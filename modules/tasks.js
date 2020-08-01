@@ -69,17 +69,8 @@ const check_sign_info = async () => {
   {
     logger.info('正在尝试网页签到')
     let {body} = await got.get('https://api.live.bilibili.com/sign/doSign', {json: true})
-    if (body.code === 0 && body.message === 'OK') {
-      logger.info(`签到成功，您已经连续签到 ${body.data.hadSignDays} 天，获得${body.data.text}${body.data.specialText}`)
-      return
-    }
-  }
-  await sleep(2000)
-  {
-    logger.info('正在尝试客户端签到')
-    let {body} = await got.get('https://api.live.bilibili.com/appUser/getSignInfo', {query: sign({}), json: true})
-    if (body.code === 0 && body.message === 'OK') {
-      logger.info(`签到成功，您已经连续签到 ${body.data.hadSignDays} 天，获得${body.data.text}${body.data.specialText}`)
+    if (body.code === 0 && body.message === '0') {
+      logger.notice(`签到成功，您已经连续签到 ${body.data.hadSignDays} 天，获得${body.data.text}${body.data.specialText}`)
       return
     }
   }
