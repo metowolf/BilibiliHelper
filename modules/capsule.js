@@ -3,63 +3,45 @@ const share = require('../utils/share').capsule
 const logger = require('../utils/logger')
 const sleep = require('../utils/sleep')
 
-const getCsrf = async () => {
-  let cookies = got.defaults.options.cookieJar.getCookiesSync('https://api.bilibili.com/')
-  for (let cookie of cookies) {
-    let found = `${cookie}`.match(/bili_jct=([0-9a-f]*)/i)
-    if (found) return found[1]
-  }
-  throw new Error('csrf 提取失败')
+const getCoin = async () => {
+  logger.info('正在查询扭蛋币余额')
+  const { body } = await got.get('https://api.live.bilibili.com/xlive/web-ucenter/v1/capsule/get_detail', { json: true })
+  if (body.code) throw new Error('扭蛋币余额查询异常')
+  const coin = (body.data && body.data.normal && body.data.normal.coin) || 0 // 没币时 normal 为 null
+  logger.info(`当前还有 ${coin} 枚扭蛋币`)
+  return coin
 }
 
-const main = async () => {
-  let coin = await getCoin()
-  let step = 100
-  while (coin && step) {
-    while (coin >= step) {
-      coin = await openCapsule(step)
-      await sleep(2000)
-    }
-    step = Math.floor(step / 10)
-  }
-}
-
-const openCapsule = async step => {
-  let csrf = await getCsrf()
-  let payload = {
-    csrf,
-    csrf_token: csrf,
-    count: step,
-    type: 'normal',
-    platform: 'h5',
-  }
-  let {body} = await got.post('https://api.live.bilibili.com/xlive/web-ucenter/v1/capsule/open_capsule', {
-    body: payload,
+// 按 100/10/1 的档位开箱，返回剩余扭蛋币
+const openCapsule = async count => {
+  const csrf = got.getCsrf()
+  const { body } = await got.post('https://api.live.bilibili.com/xlive/web-ucenter/v1/capsule/open_capsule', {
+    body: { csrf, csrf_token: csrf, count, type: 'normal', platform: 'h5' },
     form: true,
     json: true,
   })
   if (body.code) throw new Error('扭蛋失败，稍后重试')
-  for (let item of body.data.awards) {
+  for (const item of body.data.awards) {
     logger.notice(`扭蛋成功，获得 ${item.num} 个 ${item.name}`)
   }
   return body.data.coin || 0
 }
 
-const getCoin = async () => {
-  logger.info('正在查询扭蛋币余额')
-  let {body} = await got.get('https://api.live.bilibili.com/xlive/web-ucenter/v1/capsule/get_detail', {json: true})
-  if (body.code) throw new Error('扭蛋币余额查询异常')
-  logger.info(`当前还有 ${body.data.normal.coin} 枚扭蛋币`)
-  return body.data.normal.coin
+const main = async () => {
+  let coin = await getCoin()
+  for (let step = 100; step >= 1 && coin; step = Math.floor(step / 10)) {
+    while (coin >= step) {
+      coin = await openCapsule(step)
+      await sleep(2000)
+    }
+  }
 }
 
 module.exports = () => {
   if (process.env.DISABLE_CAPSULE === 'true') return
   if (share.lock > Date.now()) return
   return main()
-    .then(() => {
-      share.lock = Date.now() + 60 * 60 * 1000
-    })
+    .then(() => { share.lock = Date.now() + 60 * 60 * 1000 })
     .catch(e => {
       logger.error(e.message)
       share.lock = Date.now() + 60 * 60 * 1000

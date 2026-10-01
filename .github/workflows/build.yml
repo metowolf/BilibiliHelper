@@ -1,0 +1,63 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Install pkg
+        run: npm install -g pkg
+
+      - name: Install Python dependencies
+        run: pip install requests qrcode pillow pyinstaller
+
+      - name: Build Node.js script
+        run: pkg index.js --targets node18-win-x64 --output bin/bilibili-helper.exe
+
+      - name: Build Python GUI
+        run: pyinstaller --onefile --windowed --name BilibiliHelper gui_login.py
+
+      - name: Move exe to bin
+        run: |
+          mkdir -p bin
+          mv dist/BilibiliHelper.exe bin/BilibiliHelper.exe
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BilibiliHelper-Windows
+          path: |
+            bin/BilibiliHelper.exe
+            bin/bilibili-helper.exe
+            .env.example
+            LICENSE
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/BilibiliHelper.exe
+            bin/bilibili-helper.exe
+          generate_release_notes: true

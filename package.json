@@ -15,7 +15,8 @@
     "dotenv": "^8.0.0",
     "got": "^9.6.0",
     "md5": "^2.2.1",
-    "moment": "^2.24.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
     "qs": "^6.7.0",
     "tough-cookie": "^3.0.1",
     "tough-cookie-file-store": "^1.2.0"

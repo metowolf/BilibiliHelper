@@ -1,4 +1,22 @@
-node_modules
+# 依赖
+node_modules/
+
+# 隐私数据
 .cookies
 .config
 .env
+qrcode.png
+
+# 打包产物
+bin/*.exe
+build/
+dist/
+*.spec
+
+# Python
+__pycache__/
+*.pyc
+
+# 系统
+.DS_Store
+Thumbs.db

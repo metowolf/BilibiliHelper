@@ -1,87 +1,58 @@
-const moment = require('moment')
-
 const got = require('../utils/got')
 const share = require('../utils/share').tasks
-const sign = require('../utils/sign')
 const logger = require('../utils/logger')
-const sleep = require('../utils/sleep')
+const tomorrow = require('../utils/tomorrow')
+
+// 用 nav 接口确认登录态
+const getUserInfo = async () => {
+  try {
+    const { body } = await got.get('https://api.bilibili.com/x/web-interface/nav', { json: true })
+    if (body.code === 0 && body.data.isLogin) return body.data
+  } catch (e) {}
+  return null
+}
+
+// 主站每日签到（旧接口已失效，today/exp 作为“今天是否已拿满经验”的判断）
+const checkSign = async () => {
+  try {
+    const { body } = await got.get('https://api.bilibili.com/x/web-interface/signing', { json: true })
+    if (body.code === 0 && body.data.sign_in_days > 0) {
+      logger.notice(`主站已签到，连续签到 ${body.data.sign_in_days} 天`)
+      return true
+    }
+  } catch (e) {}
+
+  try {
+    const { body } = await got.get('https://api.bilibili.com/x/web-interface/coin/today/exp', { json: true })
+    if (body.code === 0) {
+      logger.notice(`今日投币经验: ${body.data}`)
+      return true
+    }
+  } catch (e) {}
+
+  return false
+}
 
 const main = async () => {
   logger.info('检查每日任务')
-
-  let {body} = await got.get('https://api.live.bilibili.com/i/api/taskInfo', {json: true})
-  if (body.code) throw new Error('每日任务获取失败')
-
-  share.count = 0
-  if (body.data.sign_info) await check_sign_info()
-  if (body.data.double_watch_info) await check_double_watch_info(body.data.double_watch_info)
-
-  if (share.count >= 2) {
-    let unix = moment().add(1, 'd').startOf('day').add(10, 'm').format('x')
-    share.lock = parseInt(unix, 10)
+  if (!(await getUserInfo())) {
+    logger.warning('未登录，跳过每日任务')
     return
   }
-  share.lock = Date.now() + 10 * 60 * 1000
-}
 
-const check_double_watch_info = async data => {
-  {
-    logger.info('检查任务「双端观看直播」')
-    if (data.status === 2) {
-      logger.notice('「双端观看直播」奖励已经领取')
-      share.count += 1
-      return
-    }
-    if (data.mobile_watch !== 1 || data.web_watch !== 1) {
-      logger.info('「双端观看直播」未完成，请等待')
-      return
-    }
-  }
-  {
-    logger.info('领取「双端观看直播」奖励')
-    let payload = {
-      task_id: 'double_watch_task',
-    }
-    let {body} = await got.post('https://api.live.bilibili.com/activity/v1/task/receive_award', {
-      body: sign(payload),
-      form: true,
-      json: true,
-    })
-    if (body.code) throw new Error('「双端观看直播」奖励领取失败')
-    logger.notice('「双端观看直播」奖励领取成功')
-    for (let item of data.awards) {
-      logger.notice(`获得 ${item.name} × ${item.num}`)
-    }
-  }
-}
-
-const check_sign_info = async () => {
-  {
-    logger.info('检查任务「每日签到」')
-    let {body} = await got.get('https://api.live.bilibili.com/sign/GetSignInfo', {json: true})
-    if (body.code) throw new Error('任务「每日签到」获取失败')
-    if (body.data.status) {
-      logger.notice('「每日签到」奖励已经领取')
-      share.count += 1
-      return
-    }
-  }
-  {
-    logger.info('正在尝试网页签到')
-    let {body} = await got.get('https://api.live.bilibili.com/sign/doSign', {json: true})
-    if (body.code === 0 && body.message === '0') {
-      logger.notice(`签到成功，您已经连续签到 ${body.data.hadSignDays} 天，获得${body.data.text}${body.data.specialText}`)
-      return
-    }
+  if (await checkSign()) {
+    share.lock = tomorrow(8 * 60) // 明早 8 点再检查
+    logger.notice('今日任务完成，下次检查: ' + new Date(share.lock).toLocaleString())
+  } else {
+    share.lock = Date.now() + 10 * 60 * 1000
   }
 }
 
 module.exports = () => {
   if (process.env.DISABLE_TASKS === 'true') return
   if (share.lock > Date.now()) return
-  return main()
-    .catch(e => {
-      logger.error(e.message)
-      share.lock = Date.now() + 10 * 60 * 1000
-    })
+  return main().catch(e => {
+    logger.error(e.message)
+    share.lock = Date.now() + 10 * 60 * 1000
+  })
 }
